@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTriple.Annotation", "Net
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTriple", "NetTriple\NetTriple.csproj", "{0B30F08C-84F9-4ECD-A1C1-4EA9BE286A30}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EB6B7F34-04BE-44AA-B11A-5FCF0810EBEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetTriple.Tests", "Tests\NetTriple.Tests\NetTriple.Tests.csproj", "{2B2F9563-5B0A-4BBD-9509-371065FC2069}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +25,15 @@ Global
 		{0B30F08C-84F9-4ECD-A1C1-4EA9BE286A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B30F08C-84F9-4ECD-A1C1-4EA9BE286A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B30F08C-84F9-4ECD-A1C1-4EA9BE286A30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B2F9563-5B0A-4BBD-9509-371065FC2069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B2F9563-5B0A-4BBD-9509-371065FC2069}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B2F9563-5B0A-4BBD-9509-371065FC2069}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B2F9563-5B0A-4BBD-9509-371065FC2069}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2B2F9563-5B0A-4BBD-9509-371065FC2069} = {EB6B7F34-04BE-44AA-B11A-5FCF0810EBEA}
 	EndGlobalSection
 EndGlobal

@@ -164,7 +164,7 @@ namespace NetTriple.Conversion
             InflateCore(instance, tripleObjects.ToList(), context);
         }
 
-        public void Link(object obj, InflationContext context)
+        public void Link(object obj, IInflationContext context)
         {
             throw new System.NotImplementedException();
         }
