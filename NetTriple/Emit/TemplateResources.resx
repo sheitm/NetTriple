@@ -140,7 +140,8 @@ namespace NetTriple.Conversion
                 {
                     locator.GetConverter(child.GetType()).Convert(child, triples, locator);
                     ##OBJECTASSIGNMET##
-                    triples.Add(new Triple { Subject = s, Predicate = "&lt;http://psi.hafslund.no/elements/parent&gt;", Object = co });
+                    ##PREDICATEASSIGNMENT##
+                    triples.Add(new Triple { Subject = s, Predicate = p, Object = co });
                 }
             }</value>
   </data>
@@ -180,5 +181,17 @@ namespace NetTriple.Conversion
             ##INFLATION##
         }
     }</value>
+  </data>
+  <data name="InverseChildExpansionTemplate" xml:space="preserve">
+    <value>if (obj.##PROP## != null)
+            {
+                foreach (var child in obj.##PROP##)
+                {
+                    locator.GetConverter(child.GetType()).Convert(child, triples, locator);
+                    ##OBJECTASSIGNMET##
+                    ##PREDICATEASSIGNMENT##
+                    triples.Add(new Triple { Subject = co, Predicate = p, Object = s });
+                }
+            }</value>
   </data>
 </root>

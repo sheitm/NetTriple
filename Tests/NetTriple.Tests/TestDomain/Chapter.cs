@@ -6,7 +6,7 @@ namespace NetTriple.Tests.TestDomain
     public class Chapter
     {
         [RdfSubject(Template = "http://netriple.com/unittesting/chapter/{0}")]
-        public string BookIsbn { get; set; }
+        public string IsbnAndChapter { get; set; }
 
         [RdfProperty(Predicate = "http://netriple.com/unittesting/chapter/chapternumber")]
         public int ChapterNumber { get; set; }

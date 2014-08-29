@@ -21,6 +21,19 @@ namespace NetTriple.Tests.Emit
         }
 
         [TestMethod]
+        public void GetConversionScript_NonInverseRelations_ReturnsExpectedScript()
+        {
+            // Arrange
+            var generator = new RelationSourceCodeGenerator(typeof(Book));
+
+            // Act
+            var sourceCode = generator.GetConversionScript();
+
+            // Assert
+            Assert.AreEqual(538, sourceCode.Length);
+        }
+
+        [TestMethod]
         public void GetConversionScript_HasRelations_ReturnsExpectedScript()
         {
             // Arrange

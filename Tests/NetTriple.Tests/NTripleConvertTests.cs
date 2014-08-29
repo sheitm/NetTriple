@@ -43,11 +43,11 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
-        public void ToTriples_ObjectGraph_ReturnsExpectedTriples()
+        public void ToTriples_ObjectGraphWithInverseRelation_ReturnsExpectedTriples()
         {
             // Arrange
-            var orderId = Guid.NewGuid().ToString();
-            var detailId = Guid.NewGuid().ToString();
+            var orderId = "bf96fe8b-bcd3-4bda-9989-0967beed8b55";
+            var detailId = "ab513d4a-87cd-4ab3-84a4-216c9c5fd78c";
             var details = new List<OrderDetail>
             {
                 new OrderDetail
@@ -66,11 +66,45 @@ namespace NetTriple.Tests
             var triples = obj.ToTriples();
 
             // Assert
-            Assert.IsTrue(triples.Count() == 9);
-            foreach (var triple in triples)
+            Assert.AreEqual(9, triples.Count());
+
+            Assert.IsTrue(triples.Any(t =>
+                t.Subject == "<http://netriple.com/unittesting/orderdetail/ab513d4a-87cd-4ab3-84a4-216c9c5fd78c>"
+                && t.Predicate == "<http://netriple.com/elements/owning_order>"
+                && t.Object == "<http://netriple.com/unittesting/order/bf96fe8b-bcd3-4bda-9989-0967beed8b55>"));
+        }
+
+        [TestMethod]
+        public void ToTriples_ObjectGraphWithNonInverseRelation_ReturnsExpectedTriples()
+        {
+            // Arrange
+            var isbn = "978-3-16-148410-0";
+            var chapter = 13;
+            var isbnChapter = string.Format("{0}_{1}", isbn, chapter);
+            var book = new Book
             {
-                Console.WriteLine("{0} {1} {2} .", triple.Subject, triple.Predicate, triple.Object);
-            }
+                Isbn = isbn,
+                Title = "RDF FTW",
+                Chapters = new List<Chapter>
+                {
+                    new Chapter
+                    {
+                        IsbnAndChapter = isbnChapter,
+                        ChapterNumber = chapter,
+                        Title = "RDF really is the future"
+                    }
+                }
+            };
+
+            // Act
+            var triples = book.ToTriples();
+
+            // Assert
+            Assert.AreEqual(6, triples.Count());
+            Assert.IsTrue(triples.Any(t =>
+                t.Subject == "<http://netriple.com/unittesting/book/978-3-16-148410-0>"
+                && t.Predicate == "<http://netriple.com/unittesting/book/contained_chapter>"
+                && t.Object == "<http://netriple.com/unittesting/chapter/978-3-16-148410-0_13>"));
         }
 
         [TestMethod]
@@ -94,7 +128,5 @@ namespace NetTriple.Tests
             Assert.AreEqual(1, order.OrderNumber);
             Assert.AreEqual("Testing", order.Description);
         }
-
-        //public void ToObject
     }
 }

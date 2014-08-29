@@ -89,7 +89,8 @@ namespace NetTriple.Emit {
         ///                {
         ///                    locator.GetConverter(child.GetType()).Convert(child, triples, locator);
         ///                    ##OBJECTASSIGNMET##
-        ///                    triples.Add(new Triple { Subject = s, Predicate = &quot;&lt;http://psi.hafslund.no/elements/parent&gt;&quot;, Object = co });
+        ///                    ##PREDICATEASSIGNMENT##
+        ///                    triples.Add(new Triple { Subject = s, Predicate = p, Object = co });
         ///                }
         ///            }.
         /// </summary>
@@ -114,6 +115,24 @@ namespace NetTriple.Emit {
         internal static string ConverterTemplate {
             get {
                 return ResourceManager.GetString("ConverterTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to if (obj.##PROP## != null)
+        ///            {
+        ///                foreach (var child in obj.##PROP##)
+        ///                {
+        ///                    locator.GetConverter(child.GetType()).Convert(child, triples, locator);
+        ///                    ##OBJECTASSIGNMET##
+        ///                    ##PREDICATEASSIGNMENT##
+        ///                    triples.Add(new Triple { Subject = co, Predicate = p, Object = s });
+        ///                }
+        ///            }.
+        /// </summary>
+        internal static string InverseChildExpansionTemplate {
+            get {
+                return ResourceManager.GetString("InverseChildExpansionTemplate", resourceCulture);
             }
         }
     }

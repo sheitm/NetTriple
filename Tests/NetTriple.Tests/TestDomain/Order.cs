@@ -15,7 +15,7 @@ namespace NetTriple.Tests.TestDomain
         [RdfProperty(Predicate = "http://netriple.com/unittesting/order/description")]
         public string Description { get; set; }
 
-        [RdfChildren(Inverse = false, Predicate = "http://netriple.com/elements/details")]
+        [RdfChildren(Inverse = true, Predicate = "http://netriple.com/elements/owning_order")]
         public IEnumerable<OrderDetail> Details { get; set; }
     }
 }
