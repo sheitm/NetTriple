@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using NetTriple.Emit;
+using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Tests
 {
@@ -26,7 +28,12 @@ namespace NetTriple.Tests
 
         public void Link(object obj, IInflationContext context)
         {
-            throw new System.NotImplementedException();
+            var o = (BookReview) obj;
+            var s1 = o.Id;
+			var template = "<http://netriple.com/unittesting/book_review/{0}>";
+			var s = template.Replace("{0}", s1.ToString(CultureInfo.InvariantCulture));
+
+            o.Book = context.Get<Book>(s, "http://netriple.com/unittesting/book_review/book");
         }
 
         public void InflateCore(NetTriple.Tests.TestDomain.Order obj, IList<Triple> triples, IInflationContext context)
@@ -52,6 +59,17 @@ namespace NetTriple.Tests
 
                 }
             }
+        }
+
+        private void ConvertCore(NetTriple.Tests.TestDomain.BookReview obj, IList<Triple> triples,
+            IConverterLocator locator)
+        {
+            //var s = obj.Id;
+            //if (obj.Book != null)
+            //{
+            //    var p = "predicate";
+            //    triples.Add(new Triple{ Subject = s, Predicate = p; object});
+            //}
         }
     }
 }

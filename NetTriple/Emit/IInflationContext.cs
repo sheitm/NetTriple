@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NetTriple.Emit
 {
@@ -11,5 +12,8 @@ namespace NetTriple.Emit
 
         T GetFirstOfType<T>();
         object GetFirstOfType(Type type);
+
+        T Get<T>(string sourceSubject, string predicate);
+        IEnumerable<T> GetAll<T>(string sourceSubject, string predicate);
     }
 }

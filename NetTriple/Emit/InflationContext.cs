@@ -47,5 +47,15 @@ namespace NetTriple.Emit
         {
             return _map.Values.SingleOrDefault(v => v.GetType() == type);
         }
+
+        public T Get<T>(string sourceSubject, string predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> GetAll<T>(string sourceSubject, string predicate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

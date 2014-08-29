@@ -63,6 +63,7 @@
     <Compile Include="Emit\IConverterLocator.cs" />
     <Compile Include="Emit\IInflationContext.cs" />
     <Compile Include="Emit\InflationContext.cs" />
+    <Compile Include="Emit\LinkerSourceCodeGenerator.cs" />
     <Compile Include="Emit\RelationSourceCodeGenerator.cs" />
     <Compile Include="Emit\SourceCodeGenerator.cs" />
     <Compile Include="Emit\TemplateResources.Designer.cs">
@@ -85,6 +86,7 @@
     <EmbeddedResource Include="Emit\TemplateResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TemplateResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

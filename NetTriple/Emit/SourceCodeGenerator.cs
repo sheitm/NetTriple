@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,19 +32,19 @@ namespace NetTriple.Emit
         {
             var sb = new StringBuilder();
 
-            var subjectProperty = GetNameOfSubjectProperty(_type);
-            sb.AppendLine("triple = triples.First();");
-            sb.AppendFormat("obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
+            //var subjectProperty = GetNameOfSubjectProperty(_type);
+            //sb.AppendLine("triple = triples.First();");
+            //sb.AppendFormat("obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
 
-            foreach (var pair in GetRdfProperties())
-            {
-                var prop = _type.GetProperty(pair.Key);
+            //foreach (var pair in GetRdfProperties())
+            //{
+            //    var prop = _type.GetProperty(pair.Key);
 
-                sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", pair.Value.Predicate);
-                sb.Append("if (triple != null) { obj.");
-                sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", pair.Key, prop.PropertyType.FullName);
-                sb.AppendLine("}");
-            }
+            //    sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", pair.Value.Predicate);
+            //    sb.Append("if (triple != null) { obj.");
+            //    sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", pair.Key, prop.PropertyType.FullName);
+            //    sb.AppendLine("}");
+            //}
 
             return sb.ToString();
         }
@@ -54,7 +54,7 @@ namespace NetTriple.Emit
             var sb = new StringBuilder();
 
             var subjectProperty = GetNameOfSubjectProperty(_type);
-            sb.AppendFormat("var s1 = obj.{0};\r\n", subjectProperty.Key);
+            sb.AppendFormat("var s1 = obj.{0}.ToString();\r\n", subjectProperty.Key);
             sb.AppendFormat("var template = \"<{0}>\";\r\n", subjectProperty.Value);
             sb.Append("var s = template.Replace(\"{0}\", s1);\r\n");
 

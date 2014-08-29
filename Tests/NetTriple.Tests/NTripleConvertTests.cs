@@ -108,6 +108,31 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToTriple_InstanceWithUnaryRelation_ReturnsExpectedTriples()
+        {
+            // Arrange
+            var review = new BookReview
+            {
+                Id = 900,
+                Book = new Book
+                {
+                    Isbn = "978-3-16-148410-0",
+                    Title = "Coding Rocks!"
+                }
+            };
+
+            // Act
+            var triples = review.ToTriples();
+
+            // Assert
+            Assert.AreEqual(4, triples.Count());
+            Assert.IsTrue(triples.Any(t =>
+                t.Subject == "<http://netriple.com/unittesting/book_review/900>"
+                && t.Predicate == "<http://netriple.com/unittesting/book_review/book>"
+                && t.Object == "<http://netriple.com/unittesting/book/978-3-16-148410-0>"));
+        }
+
+        [TestMethod]
         public void ToObject_SingleInstance_ReturnsExpectedInstance()
         {
             // Arrange

@@ -21,6 +21,16 @@ namespace NetTriple.Tests.Emit
         }
 
         [TestMethod]
+        public void GetConversionScript_UnaryRelation_ReturnsExpectedScript()
+        {
+            // Arrange
+            var generator = new RelationSourceCodeGenerator(typeof(BookReview));
+
+            // Act
+            var sourceCode = generator.GetConversionScript();
+        }
+
+        [TestMethod]
         public void GetConversionScript_NonInverseRelations_ReturnsExpectedScript()
         {
             // Arrange

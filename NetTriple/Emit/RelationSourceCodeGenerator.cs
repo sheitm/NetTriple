@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,15 +33,43 @@ namespace NetTriple.Emit
         {
             foreach (var pair in GetChildProperties())
             {
+                var isList = typeof (IEnumerable).IsAssignableFrom(pair.Key.PropertyType);
                 if (pair.Value.Inverse)
                 {
-                    AppendInverseRelation(sb, pair.Key, pair.Value);
+                    if (isList)
+                    {
+                        AppendInverseRelation(sb, pair.Key, pair.Value);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException("Inverse relations not implemented for unary properties.");
+                    }
+                    
                 }
                 else
                 {
-                    AppendNonInverseRelation(sb, pair.Key, pair.Value);
+                    if (isList)
+                    {
+                        AppendNonInverseRelation(sb, pair.Key, pair.Value);
+                    }
+                    else
+                    {
+                        AppendNonInverseUnaryRelation(sb, pair.Key, pair.Value);
+                    }
                 }
             }
+        }
+
+        private void AppendNonInverseUnaryRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
+        {
+            var propType = property.PropertyType;
+            var childSubjectProp = GetNameOfSubjectProperty(propType);
+            var childProp = string.Format("var co = string.Format(\"<{0}>\", r.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
+            var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
+            sb.Append(TemplateResources.UnaryExpansionTemplate
+                .Replace("##PROP##", property.Name)
+                .Replace("##OBJECTASSIGNMET##", childProp)
+                .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
         public string GetInflationScript()
@@ -48,48 +77,48 @@ namespace NetTriple.Emit
             return null;
         }
 
-        private void AppendNonInverseRelation(StringBuilder sb, string propertyName, RdfChildrenAttribute attribute)
+        private void AppendNonInverseRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
         {
-            var propType = GetTypeOfProperty(_type, propertyName);
+            var propType = GetTypeOfProperty(_type, property);
             var childSubjectProp = GetNameOfSubjectProperty(propType);
-            var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1});\r\n", childSubjectProp.Value, childSubjectProp.Key);
+            var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
             var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
             sb.Append(TemplateResources.ChildExpansionTemplate
-                .Replace("##PROP##", propertyName)
+                .Replace("##PROP##", property.Name)
                 .Replace("##OBJECTASSIGNMET##", childProp)
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        private void AppendInverseRelation(StringBuilder sb, string propertyName, RdfChildrenAttribute attribute)
+        private void AppendInverseRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
         {
-            var propType = GetTypeOfProperty(_type, propertyName);
+            var propType = GetTypeOfProperty(_type, property);
             var childSubjectProp = GetNameOfSubjectProperty(propType);
-            var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1});\r\n", childSubjectProp.Value, childSubjectProp.Key);
+            var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
             var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
             sb.Append(TemplateResources.InverseChildExpansionTemplate
-                .Replace("##PROP##", propertyName)
+                .Replace("##PROP##", property.Name)
                 .Replace("##OBJECTASSIGNMET##", childProp)
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        private IEnumerable<KeyValuePair<string, RdfChildrenAttribute>> GetChildProperties()
+        private IEnumerable<KeyValuePair<PropertyInfo, RdfChildrenAttribute>> GetChildProperties()
         {
             return _type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(p => Attribute.GetCustomAttribute(p, typeof (RdfChildrenAttribute)) != null)
                 .Aggregate(
-                    new Dictionary<string, RdfChildrenAttribute>(),
+                    new Dictionary<PropertyInfo, RdfChildrenAttribute>(),
                     (accumulator, pi) =>
                     {
                         var attrib = (RdfChildrenAttribute)Attribute.GetCustomAttribute(pi, typeof (RdfChildrenAttribute));
-                        accumulator[pi.Name] = attrib;
+                        accumulator[pi] = attrib;
                         return accumulator;
                     }
                 );
         }
 
-        private Type GetTypeOfProperty(Type owningType, string propertyName)
+        private Type GetTypeOfProperty(Type owningType, PropertyInfo property)
         {
-            var pType = owningType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public).PropertyType;
+            var pType = property.PropertyType;
 
             return pType.GenericTypeArguments == null
                 ? pType

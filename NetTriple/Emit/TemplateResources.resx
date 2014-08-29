@@ -194,4 +194,14 @@ namespace NetTriple.Conversion
                 }
             }</value>
   </data>
+  <data name="UnaryExpansionTemplate" xml:space="preserve">
+    <value>if (obj.##PROP## != null)
+            {
+            	var r = obj.##PROP##;
+            	locator.GetConverter(r.GetType()).Convert(r, triples, locator);
+            	##OBJECTASSIGNMET## 
+                ##PREDICATEASSIGNMENT##
+                triples.Add(new Triple{ Subject = s, Predicate = p, Object = co });
+            }</value>
+  </data>
 </root>
