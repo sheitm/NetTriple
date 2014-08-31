@@ -32,19 +32,27 @@ namespace NetTriple.Emit
         {
             var sb = new StringBuilder();
 
-            //var subjectProperty = GetNameOfSubjectProperty(_type);
-            //sb.AppendLine("triple = triples.First();");
-            //sb.AppendFormat("obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
+            var subjectProperty = GetNameOfSubjectProperty(_type);
+            sb.AppendLine("triple = triples.First();");
+            var subjectPropertyType = GetTypeOfSubjectProperty(_type);
+            if (subjectPropertyType == typeof (int))
+            {
+                sb.AppendFormat("obj.{0} = int.Parse(triple.Subject.GetIdOfSubject());\r\n", subjectProperty.Key);
+            }
+            else
+            {
+                sb.AppendFormat("obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
+            }
 
-            //foreach (var pair in GetRdfProperties())
-            //{
-            //    var prop = _type.GetProperty(pair.Key);
+            foreach (var pair in GetRdfProperties())
+            {
+                var prop = _type.GetProperty(pair.Key);
 
-            //    sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", pair.Value.Predicate);
-            //    sb.Append("if (triple != null) { obj.");
-            //    sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", pair.Key, prop.PropertyType.FullName);
-            //    sb.AppendLine("}");
-            //}
+                sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", pair.Value.Predicate);
+                sb.Append("if (triple != null) { obj.");
+                sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", pair.Key, prop.PropertyType.FullName);
+                sb.AppendLine("}");
+            }
 
             return sb.ToString();
         }
@@ -83,6 +91,14 @@ namespace NetTriple.Emit
             var attrib = (RdfSubjectAttribute)Attribute.GetCustomAttribute(property, typeof(RdfSubjectAttribute));
 
             return new KeyValuePair<string, string>(property.Name, attrib.Template);
+        }
+
+        private Type GetTypeOfSubjectProperty(Type type)
+        {
+            var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+
+            return property.PropertyType;
         }
 
         private IEnumerable<KeyValuePair<string, RdfPropertyAttribute>> GetRdfProperties()

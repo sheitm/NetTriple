@@ -40,7 +40,7 @@ namespace NetTriple.Tests.Emit
             var sourceCode = generator.GetConversionScript();
 
             // Assert
-            Assert.AreEqual(538, sourceCode.Length);
+            Assert.AreEqual(549, sourceCode.Length);
         }
 
         [TestMethod]
