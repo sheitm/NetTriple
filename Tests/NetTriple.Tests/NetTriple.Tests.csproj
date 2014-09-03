@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Emit\ExtensionsTests.cs" />
     <Compile Include="Emit\LinkerSourceCodeGeneratorTests.cs" />
     <Compile Include="Emit\RelationSourceCodeGeneratorTests.cs" />
     <Compile Include="Emit\SourceCodeGeneratorTests.cs" />

@@ -33,5 +33,18 @@ namespace NetTriple.Tests.Emit
             // Assert
             Assert.IsNotNull(source);
         }
+
+        [TestMethod]
+        public void GetSourceCode_ForComplexTypeWithForwardNonListReference_GetsExpectedCode()
+        {
+            // Arrange
+            var generator = new SourceCodeGenerator(typeof(BookReview));
+
+            // Act
+            var source = generator.GetSourceCode();
+
+            // Assert
+            Assert.IsNotNull(source);
+        }
     }
 }

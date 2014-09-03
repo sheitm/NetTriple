@@ -1,4 +1,7 @@
-﻿namespace NetTriple.Emit
+﻿using System.Linq;
+using System.Text;
+
+namespace NetTriple.Emit
 {
     public static class Extensions
     {
@@ -28,6 +31,25 @@
             var arr = subject.Split('/');
             var id = arr[arr.Length - 1].Trim();
             return id.EndsWith(">") ? id.Substring(0, id.Length - 1) : id;
+        }
+
+        public static string ToWashedRdfSubject(this string subjectTemplate)
+        {
+            var arr = subjectTemplate.Split('/');
+            var sb = new StringBuilder();
+            for (int i = 0; i < arr.Length-1; i++)
+            {
+                sb.Append(arr[i]);
+                if (i < arr.Length - 2)
+                {
+                    sb.Append("/");
+                }
+            }
+
+            var washed = sb.ToString();
+            return washed.StartsWith("<")
+                ? washed.Substring(1, washed.Length - 1)
+                : washed;
         }
     }
 }

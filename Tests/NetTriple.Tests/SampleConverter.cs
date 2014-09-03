@@ -8,6 +8,17 @@ namespace NetTriple.Tests
 {
     public class SampleConverter : IConverter
     {
+        public string RdfSubject { get { return "http://netriple.com/unittesting/book_review/{0}"; } }
+
+        //public bool Is
+
+        public string RdfSubjectTemplate { get { return "http://netriple.com/unittesting/book_review/{0}"; } }
+
+        public bool IsConverterForSubject(string subject)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void Convert(object obj, IList<Triple> triples, IConverterLocator locator, string parentSubject = null, string parentReferencePredicate = null)
         {
             ConvertCore((NetTriple.Tests.TestDomain.Order)obj, triples, locator);

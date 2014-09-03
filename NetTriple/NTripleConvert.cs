@@ -25,11 +25,40 @@ namespace NetTriple
 
         public static object ToObject(Type type, IEnumerable<Triple> triples)
         {
-            var converter = LoadAllRdfClasses.GetConverter(type);
+            var subjectMap = GetSubjectMap(triples);
             var context = new InflationContext();
-            converter.Inflate(triples.Select(t => t.ToString()), context, LoadAllRdfClasses.GetLocator());
+            var locator = LoadAllRdfClasses.GetLocator();
+
+            foreach (var pair in subjectMap)
+            {
+                var thisType = LoadAllRdfClasses.GetTypeForSubject(pair.Key);
+                var converter = LoadAllRdfClasses.GetConverter(thisType);
+                converter.Inflate(pair.Value.Select(t => t.ToString()), context, locator);
+            }
 
             return context.GetFirstOfType(type);
+        }
+
+        private static IDictionary<string, List<Triple>> GetSubjectMap(IEnumerable<Triple> triples)
+        {
+            return triples.Aggregate(
+                new Dictionary<string, List<Triple>>(),
+                (map, triple) =>
+                {
+                    List<Triple> list;
+                    if (map.ContainsKey(triple.Subject))
+                    {
+                        list = map[triple.Subject];
+                    }
+                    else
+                    {
+                        list = new List<Triple>();
+                        map[triple.Subject] = list;
+                    }
+
+                    list.Add(triple);
+                    return map;
+                });
         }
     }
 }

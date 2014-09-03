@@ -25,7 +25,8 @@ namespace NetTriple.Emit
                 .Replace("##CLASS##", _type.Name)
                 .Replace("##FULLCLASS##", _type.FullName)
                 .Replace("##CONVERSION##", GetConversionScript())
-                .Replace("##INFLATION##", GetInflationScript());
+                .Replace("##INFLATION##", GetInflationScript())
+                .Replace("##RDFSUBJECT##", GetRdfSubjectTemplate().ToWashedRdfSubject());
         }
 
         private string GetInflationScript()
@@ -83,6 +84,11 @@ namespace NetTriple.Emit
             return sb.ToString();
         }
 
+        private string GetRdfSubjectTemplate()
+        {
+            var subjectProperty = GetNameOfSubjectProperty(_type);
+            return subjectProperty.Value;
+        }
         private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type)
         {
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)

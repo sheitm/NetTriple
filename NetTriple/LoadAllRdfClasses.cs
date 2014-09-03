@@ -49,6 +49,28 @@ namespace NetTriple
             LoadSubjectTemplates(types);
         }
 
+        public static Type GetTypeForSubject(string subject)
+        {
+            var subj = subject.ToWashedRdfSubject();
+            if (!ConverterMap.Any(p => p.Value.IsConverterForSubject(subj)))
+            {
+                return null;
+            }
+
+            return ConverterMap.Single(p => p.Value.IsConverterForSubject(subj)).Key;
+        }
+
+        public static string WhatHaveIGot()
+        {
+            return ConverterMap.Aggregate(
+                new StringBuilder(),
+                (sb, pair) =>
+                {
+                    sb.AppendFormat("{0}\r\n", pair.Key.Name);
+                    return sb;
+                }).ToString();
+        }
+
         private static void LoadSubjectTemplates(IEnumerable<Type> types)
         {
             foreach (var type in types)

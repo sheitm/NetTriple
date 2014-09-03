@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Tests.TestDomain;
 
@@ -48,6 +49,33 @@ namespace NetTriple.Tests
         {
             // Arrange
             var subject = "http://netriple.com/unittesting/order/112233";
+        }
+
+        [TestMethod]
+        public void GetTypeForSubject_Exists_ReturnsExpectedClass()
+        {
+            // Arrange
+            var subject = "http://netriple.com/unittesting/book_review/324234";
+            LoadAllRdfClasses.Load();
+
+            // Act
+            var type = LoadAllRdfClasses.GetTypeForSubject(subject);
+
+            // Assert
+            Assert.AreSame(typeof(BookReview), type);
+        }
+
+        [TestMethod]
+        public void WhatHaveIGot_WithLoadedConvertes_ReturnsExpectedReport()
+        {
+            // Arrange
+            LoadAllRdfClasses.Load();
+
+            // Act
+            var report = LoadAllRdfClasses.WhatHaveIGot();
+
+            // Assert
+            Console.WriteLine(report);
         }
     }
 }

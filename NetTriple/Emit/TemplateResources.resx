@@ -180,6 +180,11 @@ namespace NetTriple.Conversion
             Triple triple;
             ##INFLATION##
         }
+
+        public bool IsConverterForSubject(string subject)
+        {
+           return subject == "##RDFSUBJECT##";
+        }
     }</value>
   </data>
   <data name="InverseChildExpansionTemplate" xml:space="preserve">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Tests.TestDomain;
@@ -130,6 +131,11 @@ namespace NetTriple.Tests
                 t.Subject == "<http://netriple.com/unittesting/book_review/900>"
                 && t.Predicate == "<http://netriple.com/unittesting/book_review/book>"
                 && t.Object == "<http://netriple.com/unittesting/book/978-3-16-148410-0>"));
+
+            foreach (var triple in triples)
+            {
+                Console.WriteLine(string.Format("{0} {1} {2}", triple.Subject, triple.Predicate, triple.Object));
+            }
         }
 
         [TestMethod]
@@ -152,6 +158,30 @@ namespace NetTriple.Tests
             Assert.AreEqual("c7519f11-686d-4087-856e-d014e61cfed3", order.Id);
             Assert.AreEqual(1, order.OrderNumber);
             Assert.AreEqual("Testing", order.Description);
+        }
+
+        [TestMethod]
+        public void ToObject_GraphWithForwardpointingNonListReference_ReturnesExpectedInstances()
+        {
+            // Arrange
+            var reviewSubject = "<http://netriple.com/unittesting/book_review/900>";
+            var bookSubject = "<http://netriple.com/unittesting/book/978-3-16-148410-0>";
+            var typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = reviewSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/book_review>" },
+                new Triple{ Subject = bookSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Book>" },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/title>", Object = "\"Coding Rocks!\"" },
+                new Triple{ Subject = reviewSubject, Predicate = "<http://netriple.com/unittesting/book_review/book>", Object = bookSubject }
+            };
+
+            // Act
+            var review = triples.ToObject<BookReview>();
+
+            // Assert
+            Assert.IsNotNull(review);
+            Assert.IsNotNull(review.Book);
+            Assert.AreEqual("Coding Rocks!", review.Book.Title);
         }
     }
 }
