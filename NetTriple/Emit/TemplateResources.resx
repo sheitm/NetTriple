@@ -167,8 +167,10 @@ namespace NetTriple.Conversion
 
         public void Link(object obj, IInflationContext context)
         {
-            throw new System.NotImplementedException();
+            ##LINK##
         }
+
+        ##LINKCORE##
 
         private void ConvertCore(##FULLCLASS## obj, IList&lt;Triple&gt; triples, IConverterLocator locator, string parentSubject, string parentReferencePredicate)
         {

@@ -15,13 +15,13 @@ namespace NetTriple.Tests.Emit
         [TestMethod]
         public void GetSourceCode_UnaryProperty_GetsExpectedCode()
         {
-            // Arrange
-            var generator = new LinkerSourceCodeGenerator(typeof (BookReview), "Book");
+            //// Arrange
+            //var generator = new LinkerSourceCodeGenerator(typeof (BookReview), "Book");
 
-            // Act
-            var code = generator.GetSourceCode();
+            //// Act
+            //var code = generator.GetSourceCode();
 
-            // Assert
+            //// Assert
         }
     }
 }

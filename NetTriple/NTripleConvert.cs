@@ -36,6 +36,7 @@ namespace NetTriple
                 converter.Inflate(pair.Value.Select(t => t.ToString()), context, locator);
             }
 
+            context.LinkAll(locator);
             return context.GetFirstOfType(type);
         }
 

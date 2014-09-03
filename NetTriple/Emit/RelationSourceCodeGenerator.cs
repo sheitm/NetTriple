@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using NetTriple.Annotation;
 
 namespace NetTriple.Emit
@@ -31,7 +30,7 @@ namespace NetTriple.Emit
 
         public void AppendConversionScript(StringBuilder sb)
         {
-            foreach (var pair in GetChildProperties())
+            foreach (var pair in GetChildProperties(_type))
             {
                 var isList = typeof (IEnumerable).IsAssignableFrom(pair.Key.PropertyType);
                 if (pair.Value.Inverse)
@@ -72,11 +71,6 @@ namespace NetTriple.Emit
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        public string GetInflationScript()
-        {
-            return null;
-        }
-
         private void AppendNonInverseRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
         {
             var propType = GetTypeOfProperty(_type, property);
@@ -101,9 +95,9 @@ namespace NetTriple.Emit
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        private IEnumerable<KeyValuePair<PropertyInfo, RdfChildrenAttribute>> GetChildProperties()
+        public static IEnumerable<KeyValuePair<PropertyInfo, RdfChildrenAttribute>> GetChildProperties(Type type)
         {
-            return _type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(p => Attribute.GetCustomAttribute(p, typeof (RdfChildrenAttribute)) != null)
                 .Aggregate(
                     new Dictionary<PropertyInfo, RdfChildrenAttribute>(),

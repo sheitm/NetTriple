@@ -32,10 +32,10 @@ namespace NetTriple.Emit
 
         public void LinkAll(IConverterLocator locator)
         {
-            //foreach (var obj in _map.Values)
-            //{
-            //    locator.GetConverter(obj.GetType()).Link(obj, this);
-            //}
+            foreach (var obj in _map.Values)
+            {
+                locator.GetConverter(obj.GetType()).Link(obj, this);
+            }
         }
 
         public T GetFirstOfType<T>()

@@ -26,7 +26,38 @@ namespace NetTriple.Emit
                 .Replace("##FULLCLASS##", _type.FullName)
                 .Replace("##CONVERSION##", GetConversionScript())
                 .Replace("##INFLATION##", GetInflationScript())
-                .Replace("##RDFSUBJECT##", GetRdfSubjectTemplate().ToWashedRdfSubject());
+                .Replace("##RDFSUBJECT##", GetRdfSubjectTemplate().ToWashedRdfSubject())
+                .Replace("##LINK##", GetLinkInvocationScript())
+                .Replace("##LINKCORE##", GetLinkScript());
+        }
+
+        private string GetLinkInvocationScript()
+        {
+            return string.Format("LinkCore(({0}) obj, context);\r\n", _type.FullName);
+        }
+
+        private string GetLinkScript()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendFormat("private void LinkCore({0} obj, IInflationContext context)\r\n", _type.FullName);
+            sb.AppendLine("{");
+
+            var started = false;
+            foreach (var pair in RelationSourceCodeGenerator.GetChildProperties(_type))
+            {
+                var linkGenerator = new LinkerSourceCodeGenerator(_type, pair.Key, pair.Value);
+                if (!started)
+                {
+                    started = true;
+                    linkGenerator.AppendSubjectAssignment(sb);
+                }
+
+                linkGenerator.AppendSourceCode(sb);
+            }
+
+            sb.AppendLine("}");
+            return sb.ToString();
         }
 
         private string GetInflationScript()
@@ -89,6 +120,7 @@ namespace NetTriple.Emit
             var subjectProperty = GetNameOfSubjectProperty(_type);
             return subjectProperty.Value;
         }
+
         private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type)
         {
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)

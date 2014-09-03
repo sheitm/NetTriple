@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using NetTriple.Annotation;
 
 namespace NetTriple.Emit
 {
@@ -17,30 +18,54 @@ namespace NetTriple.Emit
     {
         private readonly Type _type;
         private readonly PropertyInfo _property;
+        private readonly RdfChildrenAttribute _childAttribute;
 
-        public LinkerSourceCodeGenerator(Type type, string propertyName)
+        public LinkerSourceCodeGenerator(Type type, PropertyInfo property, RdfChildrenAttribute childAttribute)
         {
             _type = type;
-            _property = _type.GetProperty(propertyName);
+            _property = property;
+            _childAttribute = childAttribute;
         }
 
-        public string GetSourceCode()
+        public void AppendSourceCode(StringBuilder sb)
         {
-            return typeof(IEnumerable).IsAssignableFrom(_property.PropertyType)
-                ? GetEnumerableSourceCode()
-                : GetUnarySourceCode();
+            if (typeof (IEnumerable).IsAssignableFrom(_property.PropertyType))
+            {
+                AppendEnumerableSourceCode(sb);
+            }
+            else
+            {
+                AppendUnarySourceCode(sb);
+            }
         }
 
-        private string GetUnarySourceCode()
+        private void AppendUnarySourceCode(StringBuilder sb)
         {
-            return string.Empty;
             //throw new NotImplementedException();
         }
 
-        private string GetEnumerableSourceCode()
+        private void AppendEnumerableSourceCode(StringBuilder sb)
         {
-            return string.Empty;
+
             //throw new NotImplementedException();
+        }
+
+        public void AppendSubjectAssignment(StringBuilder sb)
+        {
+            var subjectProperty = GetNameOfSubjectProperty(_type);
+            sb.AppendFormat("var s1 = obj.{0}.ToString();\r\n", subjectProperty.Key);
+            sb.AppendFormat("var template = \"<{0}>\";\r\n", subjectProperty.Value);
+            sb.Append("var s = template.Replace(\"{0}\", s1);\r\n");
+        }
+
+        private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type)
+        {
+            var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+
+            var attrib = (RdfSubjectAttribute)Attribute.GetCustomAttribute(property, typeof(RdfSubjectAttribute));
+
+            return new KeyValuePair<string, string>(property.Name, attrib.Template);
         }
     }
 }
