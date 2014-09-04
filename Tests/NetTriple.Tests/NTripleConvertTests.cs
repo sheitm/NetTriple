@@ -161,7 +161,7 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
-        public void ToObject_GraphWithForwardpointingNonListReference_ReturnesExpectedInstances()
+        public void ToObject_GraphWithForwardPointingNonListReference_ReturnesExpectedInstances()
         {
             // Arrange
             var reviewSubject = "<http://netriple.com/unittesting/book_review/900>";
@@ -182,6 +182,37 @@ namespace NetTriple.Tests
             Assert.IsNotNull(review);
             Assert.IsNotNull(review.Book);
             Assert.AreEqual("Coding Rocks!", review.Book.Title);
+        }
+
+        [TestMethod]
+        public void ToObject_GraphWithForwardPointingListReference_ReturnesExpectedInstances()
+        {
+            // Arrange
+            var bookSubject = "<http://netriple.com/unittesting/book/978-3-16-148410-0>";
+            var chapterSubject = "<http://netriple.com/unittesting/chapter/978-3-16-148410-0_13>";
+            var chapter2Subject = "<http://netriple.com/unittesting/chapter/978-3-16-148410-0_14>";
+            var typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = bookSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Book>" },
+                new Triple{ Subject = chapterSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Chapter>" },
+                new Triple{ Subject = chapter2Subject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Chapter>" },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/contained_chapter>", Object = chapterSubject },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/contained_chapter>", Object = chapter2Subject },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/title>", Object = "RDF FTW" },
+                new Triple{ Subject = chapterSubject, Predicate = "<http://netriple.com/unittesting/chapter/chapternumber>", Object = "13" },
+                new Triple{ Subject = chapterSubject, Predicate = "<http://netriple.com/unittesting/chapter/title>", Object = "RDF really is the future" },
+                new Triple{ Subject = chapter2Subject, Predicate = "<http://netriple.com/unittesting/chapter/chapternumber>", Object = "14" },
+                new Triple{ Subject = chapter2Subject, Predicate = "<http://netriple.com/unittesting/chapter/title>", Object = "50 ways to utilise RDF" }
+            };
+
+            // Act
+            var book = triples.ToObject<Book>();
+
+            // Assert
+            Assert.AreEqual(2, book.Chapters.Count());
+            Assert.IsTrue(book.Chapters.Any(c => c.ChapterNumber == 13));
+            Assert.IsTrue(book.Chapters.Any(c => c.ChapterNumber == 14));
         }
     }
 }

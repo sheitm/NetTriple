@@ -4,17 +4,7 @@
     {
         public string Subject { get; set; }
         public string Predicate { get; set; }
-
-        private string _object;
-
-        public string Object
-        {
-            get { return _object; }
-            set
-            {
-                _object = value;
-            }
-        }
+        public string Object { get; set; }
 
         public override string ToString()
         {

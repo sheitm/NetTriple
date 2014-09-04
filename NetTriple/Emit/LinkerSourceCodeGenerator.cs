@@ -54,8 +54,19 @@ namespace NetTriple.Emit
 
         private void AppendEnumerableSourceCode(StringBuilder sb)
         {
-
-            //throw new NotImplementedException();
+            if (_childAttribute.Inverse)
+            {
+                //throw new NotImplementedException("Inverse not implemented");
+            }
+            else
+            {
+                var innerType = _property.PropertyType.GenericTypeArguments[0];
+                sb.AppendFormat("var all{0} = context.GetAll<{1}>(s, \"{2}\");\r\n", _property.Name, innerType.FullName, _childAttribute.Predicate);
+                sb.AppendFormat("if (all{0} != null && all{0}.Count() > 0)\r\n", _property.Name);
+                sb.Append("{\r\n");
+                sb.AppendFormat("obj.{0} = all{0};\r\n", _property.Name);
+                sb.Append("}\r\n");
+            }
         }
 
         public void AppendSubjectAssignment(StringBuilder sb)

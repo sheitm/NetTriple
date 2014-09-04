@@ -69,7 +69,19 @@ namespace NetTriple.Emit
 
         public IEnumerable<T> GetAll<T>(string sourceSubject, string predicate)
         {
-            throw new NotImplementedException();
+            return _allTriples.Where(t => t.IsMatch(sourceSubject, predicate))
+                .Aggregate(
+                    new List<T>(),
+                    (list, triple) =>
+                    {
+                        if (_map.ContainsKey(triple.Object))
+                        {
+                            list.Add((T)_map[triple.Object]);
+                        }
+
+                        return list;
+                    }
+                );
         }
     }
 }

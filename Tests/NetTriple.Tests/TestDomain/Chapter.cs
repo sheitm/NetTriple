@@ -11,7 +11,7 @@ namespace NetTriple.Tests.TestDomain
         [RdfProperty(Predicate = "http://netriple.com/unittesting/chapter/chapternumber")]
         public int ChapterNumber { get; set; }
 
-        [RdfProperty(Predicate = "http://netriple.com/unittesting/chapter/chapternumber")]
+        [RdfProperty(Predicate = "http://netriple.com/unittesting/chapter/title")]
         public string Title { get; set; }
     }
 }

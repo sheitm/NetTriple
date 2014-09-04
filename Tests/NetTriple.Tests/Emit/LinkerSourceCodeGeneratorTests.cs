@@ -58,5 +58,21 @@ namespace NetTriple.Tests.Emit
             // Assert
             Assert.AreEqual("obj.Book = context.Get<NetTriple.Tests.TestDomain.Book>(s, \"http://netriple.com/unittesting/book_review/book\");\r\n", sb.ToString());
         }
+
+        [TestMethod]
+        public void AppendSourceCode_ForForwardListRelation_AppendsExpectedCode()
+        {
+            // Arrange
+            var property = typeof (Book).GetProperty("Chapters");
+            var attrib = (RdfChildrenAttribute)Attribute.GetCustomAttribute(property, typeof(RdfChildrenAttribute));
+            var generator = new LinkerSourceCodeGenerator(typeof(BookReview), property, attrib);
+            var sb = new StringBuilder();
+
+            // Act
+            generator.AppendSourceCode(sb);
+
+            // Assert
+            var code = sb.ToString();
+        }
     }
 }
