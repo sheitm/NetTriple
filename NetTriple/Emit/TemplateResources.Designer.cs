@@ -138,6 +138,22 @@ namespace NetTriple.Emit {
         
         /// <summary>
         ///   Looks up a localized string similar to if (obj.##PROP## != null)
+        ///{
+        ///    var child = obj.##PROP##;
+        ///    locator.GetConverter(child.GetType()).Convert(child, triples, locator);
+        ///    ##OBJECTASSIGNMET##
+        ///    ##PREDICATEASSIGNMENT##
+        ///    triples.Add(new Triple { Subject = co, Predicate = p, Object = s });
+        ///}.
+        /// </summary>
+        internal static string InverseUnaryExpansionTemplate {
+            get {
+                return ResourceManager.GetString("InverseUnaryExpansionTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to if (obj.##PROP## != null)
         ///            {
         ///            	var r = obj.##PROP##;
         ///            	locator.GetConverter(r.GetType()).Convert(r, triples, locator);

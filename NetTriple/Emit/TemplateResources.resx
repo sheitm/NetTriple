@@ -201,6 +201,16 @@ namespace NetTriple.Conversion
                 }
             }</value>
   </data>
+  <data name="InverseUnaryExpansionTemplate" xml:space="preserve">
+    <value>if (obj.##PROP## != null)
+{
+    var child = obj.##PROP##;
+    locator.GetConverter(child.GetType()).Convert(child, triples, locator);
+    ##OBJECTASSIGNMET##
+    ##PREDICATEASSIGNMENT##
+    triples.Add(new Triple { Subject = co, Predicate = p, Object = s });
+}</value>
+  </data>
   <data name="UnaryExpansionTemplate" xml:space="preserve">
     <value>if (obj.##PROP## != null)
             {

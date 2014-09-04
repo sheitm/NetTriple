@@ -15,5 +15,10 @@ namespace NetTriple.Emit
 
         T Get<T>(string sourceSubject, string predicate);
         IEnumerable<T> GetAll<T>(string sourceSubject, string predicate);
+
+        T GetInverse<T>(string sourceObject, string predicate);
+        IEnumerable<T> GetAllInverse<T>(string sourceObject, string predicate);
+
+        IEnumerable<object> GetAll();
     }
 }

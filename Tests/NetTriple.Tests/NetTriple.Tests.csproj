@@ -53,9 +53,11 @@
     <Compile Include="TestDomain\Book.cs" />
     <Compile Include="TestDomain\BookReview.cs" />
     <Compile Include="TestDomain\Chapter.cs" />
+    <Compile Include="TestDomain\Husband.cs" />
     <Compile Include="TestDomain\NotAnnotated.cs" />
     <Compile Include="TestDomain\Order.cs" />
     <Compile Include="TestDomain\OrderDetail.cs" />
+    <Compile Include="TestDomain\Wife.cs" />
     <Compile Include="TripleTests.cs" />
   </ItemGroup>
   <ItemGroup>

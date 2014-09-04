@@ -214,5 +214,107 @@ namespace NetTriple.Tests
             Assert.IsTrue(book.Chapters.Any(c => c.ChapterNumber == 13));
             Assert.IsTrue(book.Chapters.Any(c => c.ChapterNumber == 14));
         }
+
+        [TestMethod]
+        public void ToObject_GraphWithInverseListReference_ReturnesExpectedInstances()
+        {
+            // Arrange
+            var orderSubject = "<http://netriple.com/unittesting/order/bf96fe8b-bcd3-4bda-9989-0967beed8b55>";
+            var detailSubject = "<http://netriple.com/unittesting/orderdetail/ab513d4a-87cd-4ab3-84a4-216c9c5fd78c>";
+            var typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = orderSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Order>" },
+                new Triple{ Subject = detailSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/OrderDetail>" },
+                new Triple{ Subject = detailSubject, Predicate = "<http://netriple.com/elements/owning_order>", Object = orderSubject },
+
+                new Triple{ Subject = orderSubject, Predicate = "<http://netriple.com/unittesting/order/ordernumber>", Object = "1" },
+                new Triple{ Subject = orderSubject, Predicate = "<http://netriple.com/unittesting/order/description>", Object = "Testing" },
+
+                new Triple{ Subject = detailSubject, Predicate = "<http://netriple.com/unittesting/order/orderdetailnumber>", Object = "1" },
+                new Triple{ Subject = detailSubject, Predicate = "<http://netriple.com/unittesting/order/description>", Object = "Test detail" },
+                new Triple{ Subject = detailSubject, Predicate = "<http://netriple.com/unittesting/order/quantity>", Object = "5" },
+                new Triple{ Subject = detailSubject, Predicate = "<http://netriple.com/unittesting/order/productcode>", Object = "0033" }
+            };
+
+            // Act
+            var order = triples.ToObject<Order>();
+        }
+
+        [TestMethod]
+        public void ToTriples_WithInverseUnaryRelation_ReturnsExpectedTriples()
+        {
+            // Arrange
+            var wife = new Wife {Id = 1, Name = "Kari"};
+            var husband = new Husband {Id = 2, Name = "Per", Wife = wife};
+
+            // Act
+            var triples = husband.ToTriples().ToList();
+
+            // Assert
+            Assert.AreEqual(5, triples.Count());
+            Assert.IsTrue(triples.Any(t => t.ToString() == "<http://netriple.com/unittesting/husband/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://netriple.com/unittesting/husband>"));
+            Assert.IsTrue(triples.Any(t => t.ToString() == "<http://netriple.com/unittesting/husband/2> <http://netriple.com/unittesting/husband/name> \"Per\""));
+            Assert.IsTrue(triples.Any(t => t.ToString() == "<http://netriple.com/unittesting/wife/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://netriple.com/unittesting/wife>"));
+            Assert.IsTrue(triples.Any(t => t.ToString() == "<http://netriple.com/unittesting/wife/1> <http://netriple.com/unittesting/wife/name> \"Kari\""));
+            Assert.IsTrue(triples.Any(t => t.ToString() == "<http://netriple.com/unittesting/wife/1> <http://netriple.com/unittesting/wife_to_husband> <http://netriple.com/unittesting/husband/2>"));
+        }
+
+        [TestMethod]
+        public void ToObject_WithInverseUnaryRelation_ReturnsExpectedObject()
+        {
+            // Arrange
+            var husbandSubject = "<http://netriple.com/unittesting/husband/2>";
+            var wifeSubject = "<http://netriple.com/unittesting/wife/1>";
+            var typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = husbandSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/husband>"},
+                new Triple{Subject = wifeSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/wife>"},
+                new Triple{Subject = wifeSubject, Predicate = "<http://netriple.com/unittesting/wife_to_husband>", Object = husbandSubject},
+                new Triple{Subject = wifeSubject, Predicate = "<http://netriple.com/unittesting/wife/name>", Object = "Kari"},
+                new Triple{Subject = husbandSubject, Predicate = "<http://netriple.com/unittesting/husband/name>", Object = "Per"},
+            };
+
+            // Act
+            var husband = triples.ToObject<Husband>();
+
+            // Assert
+            Assert.AreEqual(2, husband.Id);
+            Assert.IsNotNull(husband.Wife);
+            Assert.AreEqual(1, husband.Wife.Id);
+        }
+
+        [TestMethod]
+        public void ToObjects_HappyDays_ReturnsAllObjects()
+        {
+            // Arrange
+            var bookSubject = "<http://netriple.com/unittesting/book/978-3-16-148410-0>";
+            var chapterSubject = "<http://netriple.com/unittesting/chapter/978-3-16-148410-0_13>";
+            var chapter2Subject = "<http://netriple.com/unittesting/chapter/978-3-16-148410-0_14>";
+            var typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = bookSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Book>" },
+                new Triple{ Subject = chapterSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Chapter>" },
+                new Triple{ Subject = chapter2Subject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Chapter>" },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/contained_chapter>", Object = chapterSubject },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/contained_chapter>", Object = chapter2Subject },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/title>", Object = "RDF FTW" },
+                new Triple{ Subject = chapterSubject, Predicate = "<http://netriple.com/unittesting/chapter/chapternumber>", Object = "13" },
+                new Triple{ Subject = chapterSubject, Predicate = "<http://netriple.com/unittesting/chapter/title>", Object = "RDF really is the future" },
+                new Triple{ Subject = chapter2Subject, Predicate = "<http://netriple.com/unittesting/chapter/chapternumber>", Object = "14" },
+                new Triple{ Subject = chapter2Subject, Predicate = "<http://netriple.com/unittesting/chapter/title>", Object = "50 ways to utilise RDF" }
+            };
+
+            // Act
+            var objects = triples.ToObjects().ToList();
+
+            // Assert
+            Assert.AreEqual(3, objects.Count());
+            Assert.AreEqual(1, objects.Count(o => o is Book));
+            Assert.AreEqual(2, objects.Count(o => o is Chapter));
+        }
     }
 }

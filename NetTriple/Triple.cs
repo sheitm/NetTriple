@@ -41,6 +41,13 @@
             return Subject == subj && Predicate == pred;
         }
 
+        public bool IsInverseMatch(string objectValue, string predicate)
+        {
+            var obj = objectValue.StartsWith("<") ? objectValue : string.Format("<{0}>", objectValue);
+            var pred = predicate.StartsWith("<") ? predicate : string.Format("<{0}>", predicate);
+            return Object == obj && Predicate == pred;
+        }
+
         private object WashStringObject()
         {
             if (string.IsNullOrWhiteSpace(Object))

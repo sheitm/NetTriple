@@ -54,6 +54,12 @@ namespace NetTriple.Emit
             return _map.Values.SingleOrDefault(v => v.GetType() == type);
         }
 
+
+        public IEnumerable<object> GetAll()
+        {
+            return _map.Values;
+        }
+
         public T Get<T>(string sourceSubject, string predicate)
         {
             var triple = _allTriples.SingleOrDefault(t => t.IsMatch(sourceSubject, predicate));
@@ -77,6 +83,36 @@ namespace NetTriple.Emit
                         if (_map.ContainsKey(triple.Object))
                         {
                             list.Add((T)_map[triple.Object]);
+                        }
+
+                        return list;
+                    }
+                );
+        }
+
+        public T GetInverse<T>(string sourceObject, string predicate)
+        {
+            var triple = _allTriples.SingleOrDefault(t => t.IsInverseMatch(sourceObject, predicate));
+            if (triple == null)
+            {
+                return default(T);
+            }
+
+            return _map.ContainsKey(triple.Subject)
+                ? (T)_map[triple.Subject]
+                : default(T);
+        }
+
+        public IEnumerable<T> GetAllInverse<T>(string sourceObject, string predicate)
+        {
+            return _allTriples.Where(t => t.IsInverseMatch(sourceObject, predicate))
+                .Aggregate(
+                    new List<T>(),
+                    (list, triple) =>
+                    {
+                        if (_map.ContainsKey(triple.Subject))
+                        {
+                            list.Add((T)_map[triple.Subject]);
                         }
 
                         return list;

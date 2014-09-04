@@ -41,9 +41,8 @@ namespace NetTriple.Emit
                     }
                     else
                     {
-                        throw new NotImplementedException("Inverse relations not implemented for unary properties.");
+                        AppendInverseUnaryRelation(sb, pair.Key, pair.Value);
                     }
-                    
                 }
                 else
                 {
@@ -90,6 +89,18 @@ namespace NetTriple.Emit
             var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
             var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
             sb.Append(TemplateResources.InverseChildExpansionTemplate
+                .Replace("##PROP##", property.Name)
+                .Replace("##OBJECTASSIGNMET##", childProp)
+                .Replace("##PREDICATEASSIGNMENT##", pred));
+        }
+
+        private void AppendInverseUnaryRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
+        {
+            var propType = property.PropertyType;
+            var childSubjectProp = GetNameOfSubjectProperty(propType);
+            var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
+            var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
+            sb.Append(TemplateResources.InverseUnaryExpansionTemplate
                 .Replace("##PROP##", property.Name)
                 .Replace("##OBJECTASSIGNMET##", childProp)
                 .Replace("##PREDICATEASSIGNMENT##", pred));

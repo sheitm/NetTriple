@@ -25,19 +25,14 @@ namespace NetTriple
 
         public static object ToObject(Type type, IEnumerable<Triple> triples)
         {
-            var subjectMap = GetSubjectMap(triples);
-            var context = new InflationContext(triples);
-            var locator = LoadAllRdfClasses.GetLocator();
-
-            foreach (var pair in subjectMap)
-            {
-                var thisType = LoadAllRdfClasses.GetTypeForSubject(pair.Key);
-                var converter = LoadAllRdfClasses.GetConverter(thisType);
-                converter.Inflate(pair.Value.Select(t => t.ToString()), context, locator);
-            }
-
-            context.LinkAll(locator);
+            var context = Expand(triples);
             return context.GetFirstOfType(type);
+        }
+
+        public static IEnumerable<object> ToObjects(this IEnumerable<Triple> triples)
+        {
+            var context = Expand(triples);
+            return context.GetAll();
         }
 
         private static IDictionary<string, List<Triple>> GetSubjectMap(IEnumerable<Triple> triples)
@@ -60,6 +55,23 @@ namespace NetTriple
                     list.Add(triple);
                     return map;
                 });
+        }
+
+        private static IInflationContext Expand( IEnumerable<Triple> triples)
+        {
+            var subjectMap = GetSubjectMap(triples);
+            var context = new InflationContext(triples);
+            var locator = LoadAllRdfClasses.GetLocator();
+
+            foreach (var pair in subjectMap)
+            {
+                var thisType = LoadAllRdfClasses.GetTypeForSubject(pair.Key);
+                var converter = LoadAllRdfClasses.GetConverter(thisType);
+                converter.Inflate(pair.Value.Select(t => t.ToString()), context, locator);
+            }
+
+            context.LinkAll(locator);
+            return context;
         }
     }
 }

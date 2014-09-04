@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Emit;
 using NetTriple.Tests.TestDomain;
 
@@ -54,6 +55,19 @@ namespace NetTriple.Tests.Emit
 
             // Assert
             Assert.IsTrue(sourceCode.Contains("<http://netriple.com/unittesting/orderdetail/{0}>"));
+        }
+
+        [TestMethod]
+        public void GetConversionScript_InverseunaryRelation_ReturnsExpectedScript()
+        {
+            // Arrange
+            var generator = new RelationSourceCodeGenerator(typeof(Husband));
+
+            // Act
+            var sourceCode = generator.GetConversionScript();
+
+            // Assert
+            Console.WriteLine(sourceCode);
         }
     }
 }

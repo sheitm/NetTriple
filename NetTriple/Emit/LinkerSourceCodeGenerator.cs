@@ -41,32 +41,19 @@ namespace NetTriple.Emit
 
         private void AppendUnarySourceCode(StringBuilder sb)
         {
-            if (_childAttribute.Inverse)
-            {
-                throw new NotImplementedException("Inverse not implemented");
-            }
-            else
-            {
-                //T Get<T>(string sourceSubject, string predicate);
-                sb.AppendFormat("obj.{0} = context.Get<{1}>(s, \"{2}\");\r\n", _property.Name, _property.PropertyType.FullName, _childAttribute.Predicate);
-            }
+            var getterMethod = _childAttribute.Inverse ? "GetInverse" : "Get";
+            sb.AppendFormat("obj.{0} = context.{3}<{1}>(s, \"{2}\");\r\n", _property.Name, _property.PropertyType.FullName, _childAttribute.Predicate, getterMethod);
         }
 
         private void AppendEnumerableSourceCode(StringBuilder sb)
         {
-            if (_childAttribute.Inverse)
-            {
-                //throw new NotImplementedException("Inverse not implemented");
-            }
-            else
-            {
-                var innerType = _property.PropertyType.GenericTypeArguments[0];
-                sb.AppendFormat("var all{0} = context.GetAll<{1}>(s, \"{2}\");\r\n", _property.Name, innerType.FullName, _childAttribute.Predicate);
-                sb.AppendFormat("if (all{0} != null && all{0}.Count() > 0)\r\n", _property.Name);
-                sb.Append("{\r\n");
-                sb.AppendFormat("obj.{0} = all{0};\r\n", _property.Name);
-                sb.Append("}\r\n");
-            }
+            var getterMethod = _childAttribute.Inverse ? "GetAllInverse" : "GetAll";
+            var innerType = _property.PropertyType.GenericTypeArguments[0];
+            sb.AppendFormat("var all{0} = context.{3}<{1}>(s, \"{2}\");\r\n", _property.Name, innerType.FullName, _childAttribute.Predicate, getterMethod);
+            sb.AppendFormat("if (all{0} != null && all{0}.Count() > 0)\r\n", _property.Name);
+            sb.Append("{\r\n");
+            sb.AppendFormat("obj.{0} = all{0};\r\n", _property.Name);
+            sb.Append("}\r\n");
         }
 
         public void AppendSubjectAssignment(StringBuilder sb)
