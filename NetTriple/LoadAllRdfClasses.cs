@@ -19,6 +19,7 @@ namespace NetTriple
     {
         private static readonly Dictionary<Type, IConverter> ConverterMap = new Dictionary<Type, IConverter>();
         private static readonly Dictionary<string, Type> SubjectMap = new Dictionary<string, Type>();
+        private static readonly List<DeclaredRelation> DeclaredRelations = new List<DeclaredRelation>(); 
 
         /// <summary>
         /// Finds all classes that are decorated with the RdfTypeAttribute
@@ -47,6 +48,7 @@ namespace NetTriple
             Compile(sourceCode, types);
 
             LoadSubjectTemplates(types);
+            LoadRelationTemplates(types);
         }
 
         public static Type GetTypeForSubject(string subject)
@@ -69,6 +71,27 @@ namespace NetTriple
                     sb.AppendFormat("{0}\r\n", pair.Key.Name);
                     return sb;
                 }).ToString();
+        }
+
+        public static IEnumerable<DeclaredRelation> GetRelations()
+        {
+            return DeclaredRelations;
+        }
+
+        private static void LoadRelationTemplates(IEnumerable<Type> types)
+        {
+            foreach (var type in types)
+            {
+                var typeAttrib = (RdfTypeAttribute)Attribute.GetCustomAttribute(type, typeof (RdfTypeAttribute));
+                foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    var childAttrib = (RdfChildrenAttribute) Attribute.GetCustomAttribute(property, typeof (RdfChildrenAttribute));
+                    if (childAttrib != null)
+                    {
+                        DeclaredRelations.Add(new DeclaredRelation(type, typeAttrib, childAttrib, property.PropertyType));
+                    }
+                }
+            }
         }
 
         private static void LoadSubjectTemplates(IEnumerable<Type> types)

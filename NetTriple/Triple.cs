@@ -4,7 +4,17 @@
     {
         public string Subject { get; set; }
         public string Predicate { get; set; }
-        public string Object { get; set; }
+
+        private string _object;
+
+        public string Object
+        {
+            get { return _object; }
+            set
+            {
+                _object = value;
+            }
+        }
 
         public override string ToString()
         {
@@ -32,6 +42,13 @@
 
             res = Object;
             return (T)res;
+        }
+
+        public bool IsMatch(string subject, string predicate)
+        {
+            var subj = subject.StartsWith("<") ? subject : string.Format("<{0}>", subject);
+            var pred = predicate.StartsWith("<") ? predicate : string.Format("<{0}>", predicate);
+            return Subject == subj && Predicate == pred;
         }
 
         private object WashStringObject()

@@ -19,7 +19,7 @@ namespace NetTriple.Tests
             Assert.IsTrue(types.Any());
         }
 
-        [TestMethod, TestCategory("Unit")]
+        [TestMethod]
         public void GetConverter_ClassIsNotAnnotated_ReturnsNull()
         {
             // Arrange
@@ -32,6 +32,18 @@ namespace NetTriple.Tests
             Assert.IsNull(converter);
         }
 
+        [TestMethod]
+        public void GetRelations_AfterLoad_HasRelastions()
+        {
+            // Arrange
+            LoadAllRdfClasses.Load();
+
+            // Act
+            var relations = LoadAllRdfClasses.GetRelations();
+
+            // Assert
+            Assert.IsTrue(relations.Any());
+        }
 
         [TestMethod]
         public void Load_HappyDays_LoadsAsExpected()

@@ -8,6 +8,12 @@ namespace NetTriple.Emit
     {
         private readonly Dictionary<string, object> _map = new Dictionary<string, object>();
         private readonly Dictionary<string, List<object>> _parentRefs = new Dictionary<string, List<object>>();
+        private readonly IEnumerable<Triple> _allTriples;
+
+        public InflationContext(IEnumerable<Triple> allTriples)
+        {
+            _allTriples = allTriples;
+        }
 
         public void Add(string subject, object obj)
         {
@@ -50,7 +56,15 @@ namespace NetTriple.Emit
 
         public T Get<T>(string sourceSubject, string predicate)
         {
-            throw new NotImplementedException();
+            var triple = _allTriples.SingleOrDefault(t => t.IsMatch(sourceSubject, predicate));
+            if (triple == null)
+            {
+                return default(T);
+            }
+
+            return _map.ContainsKey(triple.Object)
+                ? (T) _map[triple.Object]
+                : default(T);
         }
 
         public IEnumerable<T> GetAll<T>(string sourceSubject, string predicate)

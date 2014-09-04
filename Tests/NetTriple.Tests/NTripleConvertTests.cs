@@ -147,7 +147,7 @@ namespace NetTriple.Tests
             {
                 new Triple{ Subject = subject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/Order>" },
                 new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/order/ordernumber>", Object = "1" },
-                new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/order/description>", Object = "\"Testing\"" }
+                new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/order/description>", Object = "Testing again" }
             };
 
             // Act
@@ -157,7 +157,7 @@ namespace NetTriple.Tests
             Assert.IsNotNull(order);
             Assert.AreEqual("c7519f11-686d-4087-856e-d014e61cfed3", order.Id);
             Assert.AreEqual(1, order.OrderNumber);
-            Assert.AreEqual("Testing", order.Description);
+            Assert.AreEqual("Testing again", order.Description);
         }
 
         [TestMethod]
@@ -171,7 +171,7 @@ namespace NetTriple.Tests
             {
                 new Triple{ Subject = reviewSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/book_review>" },
                 new Triple{ Subject = bookSubject, Predicate = typePredicate, Object = "<http://netriple.com/unittesting/Book>" },
-                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/title>", Object = "\"Coding Rocks!\"" },
+                new Triple{ Subject = bookSubject, Predicate = "<http://netriple.com/unittesting/book/title>", Object = "Coding Rocks!" },
                 new Triple{ Subject = reviewSubject, Predicate = "<http://netriple.com/unittesting/book_review/book>", Object = bookSubject }
             };
 

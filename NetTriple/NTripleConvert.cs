@@ -26,7 +26,7 @@ namespace NetTriple
         public static object ToObject(Type type, IEnumerable<Triple> triples)
         {
             var subjectMap = GetSubjectMap(triples);
-            var context = new InflationContext();
+            var context = new InflationContext(triples);
             var locator = LoadAllRdfClasses.GetLocator();
 
             foreach (var pair in subjectMap)

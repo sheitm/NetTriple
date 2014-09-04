@@ -18,7 +18,7 @@ namespace NetTriple.Tests.Emit
 
             // Assert
             Assert.IsTrue(source.Contains("var template = \"<http://netriple.com/unittesting/orderdetail/{0}>\";"));
-            Assert.AreEqual(3320, source.Length);
+            Assert.AreEqual(3615, source.Length);
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ namespace NetTriple.Tests.Emit
         public void GetSourceCode_ForComplexTypeWithForwardNonListReference_GetsExpectedCode()
         {
             // Arrange
-            var generator = new SourceCodeGenerator(typeof(BookReview));
+            var generator = new SourceCodeGenerator(typeof(Book));
 
             // Act
             var source = generator.GetSourceCode();

@@ -41,7 +41,15 @@ namespace NetTriple.Emit
 
         private void AppendUnarySourceCode(StringBuilder sb)
         {
-            //throw new NotImplementedException();
+            if (_childAttribute.Inverse)
+            {
+                throw new NotImplementedException("Inverse not implemented");
+            }
+            else
+            {
+                //T Get<T>(string sourceSubject, string predicate);
+                sb.AppendFormat("obj.{0} = context.Get<{1}>(s, \"{2}\");\r\n", _property.Name, _property.PropertyType.FullName, _childAttribute.Predicate);
+            }
         }
 
         private void AppendEnumerableSourceCode(StringBuilder sb)

@@ -18,11 +18,31 @@ namespace NetTriple.Emit
         public static Triple ToTriple(this string ts)
         {
             var arr = ts.Split(null);
+            string obj;
+            if (arr.Length == 3)
+            {
+                obj = arr[2];
+            }
+            else
+            {
+                var sb = new StringBuilder();
+                for (int i = 2; i < arr.Length; i++)
+                {
+                    sb.Append(arr[i]);
+                    if (i < arr.Length - 1)
+                    {
+                        sb.Append(" ");
+                    }
+                }
+
+                obj = sb.ToString();
+            }
+
             return new Triple
             {
                 Subject = arr[0],
                 Predicate = arr[1],
-                Object = arr[2]
+                Object = obj
             };
         }
 
