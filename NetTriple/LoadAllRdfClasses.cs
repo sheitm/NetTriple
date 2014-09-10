@@ -44,11 +44,15 @@ namespace NetTriple
             }
 
             var types = Find().ToList();
-            var sourceCode = GetSourceCode(types);
-            Compile(sourceCode, types);
+            LoadTypes(types);
+        }
 
-            LoadSubjectTemplates(types);
-            LoadRelationTemplates(types);
+        public static void LoadFromAssemblyOf<T>()
+        {
+            var types = typeof (T).Assembly.GetTypes()
+                .Where(t => Attribute.GetCustomAttribute(t, typeof (RdfTypeAttribute)) != null);
+
+            LoadTypes(types);
         }
 
         public static Type GetTypeForSubject(string subject)
@@ -76,6 +80,16 @@ namespace NetTriple
         public static IEnumerable<DeclaredRelation> GetRelations()
         {
             return DeclaredRelations;
+        }
+
+        private static void LoadTypes(IEnumerable<Type> types)
+        {
+            var typs = types.ToList();
+            var sourceCode = GetSourceCode(typs);
+            Compile(sourceCode, typs);
+
+            LoadSubjectTemplates(typs);
+            LoadRelationTemplates(typs);
         }
 
         private static void LoadRelationTemplates(IEnumerable<Type> types)
