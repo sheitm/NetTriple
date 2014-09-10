@@ -1,4 +1,6 @@
-﻿namespace NetTriple
+﻿using System;
+
+namespace NetTriple
 {
     public class Triple
     {
@@ -28,6 +30,12 @@
             if (typeof(string) == typeof(T))
             {
                 return (T)WashStringObject();
+            }
+
+            if (typeof (DateTime) == typeof (T))
+            {
+                object o = DateTime.Parse(Object);
+                return (T) o;
             }
 
             res = Object;

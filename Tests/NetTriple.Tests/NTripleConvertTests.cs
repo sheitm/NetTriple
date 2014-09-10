@@ -316,5 +316,33 @@ namespace NetTriple.Tests
             Assert.AreEqual(1, objects.Count(o => o is Book));
             Assert.AreEqual(2, objects.Count(o => o is Chapter));
         }
+
+        [TestMethod]
+        public void ConvertToTriple_PerfectlyFormatted_ReturnsExpectedTriple()
+        {
+            // Arrange
+            var s =
+                "<http://nettriple/workorder/99> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://nettriple/workorder>";
+
+            // Act
+            var triple = s.ConvertToTriple();
+
+            // Assert
+            Assert.AreEqual(s, triple.ToString());
+        }
+
+        [TestMethod]
+        public void ConvertToTriple_WhitespaceInObject_ReturnsExpectedTriple()
+        {
+            // Arrange
+            var s =
+                "<http://nettriple/workorder/99> <http://nettriple/name> \"Hey! There are spaces!  !  !\"";
+
+            // Act
+            var triple = s.ConvertToTriple();
+
+            // Assert
+            Assert.AreEqual(s, triple.ToString());
+        }
     }
 }

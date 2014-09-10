@@ -35,6 +35,37 @@ namespace NetTriple
             return context.GetAll();
         }
 
+        public static Triple ConvertToTriple(this string s)
+        {
+            var arr = s.Split(null);
+            string v;
+            if (arr.Length > 3)
+            {
+                var sb = new StringBuilder();
+                for (int i = 2; i < arr.Length; i++)
+                {
+                    sb.Append(arr[i]);
+                    if (i < arr.Length - 1)
+                    {
+                        sb.Append(" ");
+                    }
+                }
+
+                v = sb.ToString();
+            }
+            else
+            {
+                v = arr[2];
+            }
+
+            return new Triple
+            {
+                Subject = arr[0],
+                Predicate = arr[1],
+                Object = v
+            };
+        }
+
         private static IDictionary<string, List<Triple>> GetSubjectMap(IEnumerable<Triple> triples)
         {
             return triples.Aggregate(
