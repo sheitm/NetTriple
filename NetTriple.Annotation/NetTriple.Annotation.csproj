@@ -39,9 +39,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IPropertyPredicateSpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyPredicateSpecification.cs" />
     <Compile Include="RdfChildrenAttribute.cs" />
     <Compile Include="RdfPropertyAttribute.cs" />
+    <Compile Include="RdfPropertyOnClassAttribute.cs" />
     <Compile Include="RdfSubjectAttribute.cs" />
     <Compile Include="RdfTypeAttribute.cs" />
   </ItemGroup>

@@ -89,5 +89,15 @@ namespace NetTriple.Tests
             // Assert
             Console.WriteLine(report);
         }
+
+        [TestMethod]
+        public void LoadFromAssemblyOf_AfterGlobalLoad_NoCrash()
+        {
+            // Arrange
+            LoadAllRdfClasses.Load();
+
+            // Act
+            LoadAllRdfClasses.LoadFromAssemblyOf<Book>();
+        }
     }
 }

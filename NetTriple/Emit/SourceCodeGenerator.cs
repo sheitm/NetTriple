@@ -76,13 +76,13 @@ namespace NetTriple.Emit
                 sb.AppendFormat("obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
             }
 
-            foreach (var pair in GetRdfProperties())
+            foreach (var ppInfo in GetRdfProperties())
             {
-                var prop = _type.GetProperty(pair.Key);
+                var prop = ppInfo.Property;
 
-                sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", pair.Value.Predicate);
+                sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", ppInfo.Predicate);
                 sb.Append("if (triple != null) { obj.");
-                sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", pair.Key, prop.PropertyType.FullName);
+                sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", prop.Name, prop.PropertyType.FullName);
                 sb.AppendLine("}");
             }
 
@@ -102,10 +102,10 @@ namespace NetTriple.Emit
             sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = \"<{1}>\"", _rdfTypeAttribute.Predicate, _rdfTypeAttribute.Value);
             sb.AppendLine(" });");
 
-            foreach (var pair in GetRdfProperties())
+            foreach (var ppInfo in GetRdfProperties())
             {
                 sb.Append("triples.Add(new Triple { ");
-                sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = obj.{1}.ToTripleObject()", pair.Value.Predicate, pair.Key);
+                sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = obj.{1}.ToTripleObject()", ppInfo.Predicate, ppInfo.Property.Name);
                 sb.AppendLine(" });");
             }
 
@@ -139,18 +139,27 @@ namespace NetTriple.Emit
             return property.PropertyType;
         }
 
-        private IEnumerable<KeyValuePair<string, RdfPropertyAttribute>> GetRdfProperties()
+        private IEnumerable<IPropertyPredicateSpecification> GetRdfProperties()
         {
-            return _type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            var result = _type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(p => Attribute.GetCustomAttribute(p, typeof(RdfPropertyAttribute)) != null)
                 .Aggregate(
-                    new Dictionary<string, RdfPropertyAttribute>(),
-                    (map, p) =>
+                    new List<IPropertyPredicateSpecification>(),
+                    (list, p) =>
                     {
                         var attrib = (RdfPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(RdfPropertyAttribute));
-                        map[p.Name] = attrib;
-                        return map;
+                        attrib.SetProperty(p);
+                        list.Add(attrib);
+                        return list;
                     });
+
+            var classAttrib = Attribute.GetCustomAttribute(_type, typeof(RdfPropertyOnClassAttribute));
+            if (classAttrib != null)
+            {
+                
+            }
+
+            return result;
         }
     }
 }

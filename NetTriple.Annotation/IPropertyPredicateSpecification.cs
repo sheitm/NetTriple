@@ -1,0 +1,10 @@
+﻿using System.Reflection;
+
+namespace NetTriple.Annotation
+{
+    public interface IPropertyPredicateSpecification
+    {
+        string Predicate { get; }
+        PropertyInfo Property { get; }
+    }
+}

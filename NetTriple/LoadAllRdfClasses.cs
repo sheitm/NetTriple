@@ -20,6 +20,7 @@ namespace NetTriple
         private static readonly Dictionary<Type, IConverter> ConverterMap = new Dictionary<Type, IConverter>();
         private static readonly Dictionary<string, Type> SubjectMap = new Dictionary<string, Type>();
         private static readonly List<DeclaredRelation> DeclaredRelations = new List<DeclaredRelation>(); 
+        private static readonly List<Assembly> LoadedAssemblies = new List<Assembly>(); 
 
         /// <summary>
         /// Finds all classes that are decorated with the RdfTypeAttribute
@@ -43,16 +44,15 @@ namespace NetTriple
                 return;
             }
 
-            var types = Find().ToList();
-            LoadTypes(types);
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                LoadFromAssembly(assembly);
+            }
         }
 
         public static void LoadFromAssemblyOf<T>()
         {
-            var types = typeof (T).Assembly.GetTypes()
-                .Where(t => Attribute.GetCustomAttribute(t, typeof (RdfTypeAttribute)) != null);
-
-            LoadTypes(types);
+            LoadFromAssembly(typeof (T).Assembly);
         }
 
         public static Type GetTypeForSubject(string subject)
@@ -80,6 +80,21 @@ namespace NetTriple
         public static IEnumerable<DeclaredRelation> GetRelations()
         {
             return DeclaredRelations;
+        }
+
+        public static void LoadFromAssembly(Assembly assembly)
+        {
+            if (LoadedAssemblies.Contains(assembly))
+            {
+                return;
+            }
+
+            LoadedAssemblies.Add(assembly);
+
+            var types = assembly.GetTypes()
+                .Where(t => Attribute.GetCustomAttribute(t, typeof(RdfTypeAttribute)) != null);
+
+            LoadTypes(types);
         }
 
         private static void LoadTypes(IEnumerable<Type> types)
