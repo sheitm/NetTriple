@@ -139,6 +139,45 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToTriples_PropertiesOnClass_ReturnsExpectedTriples()
+        {
+            // Arrange
+            var measurement = new Measurement
+            {
+                Id = "123",
+                Value = (float)1.123,
+                Unit = "mW"
+            };
+
+            // Act
+            var triples = measurement.ToTriples().ToList();
+
+            // Assert
+            Assert.IsTrue(triples.Any(t => t.ToString() == "<http://netriple.com/unittesting/measurement/123> <http://netriple.com/unittesting/measurement/value> 1.123"));
+        }
+
+        [TestMethod]
+        public void ToObject_PropertiesOnClass_ReturnsExpectedTriples()
+        {
+            // Arrange
+            var subject = "<http://netriple.com/unittesting/measurement/123>";
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = subject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/Measurement>" },
+                new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/measurement/value>", Object = "1" },
+                new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/measurement/unit>", Object = "mW" }
+            };
+
+            // Act
+            var measurement = triples.ToObject<Measurement>();
+
+            // Assert
+            Assert.AreEqual("123", measurement.Id);
+            Assert.AreEqual(1.0, measurement.Value);
+            Assert.AreEqual("mW", measurement.Unit);
+        }
+
+        [TestMethod]
         public void ToObject_SingleInstance_ReturnsExpectedInstance()
         {
             // Arrange

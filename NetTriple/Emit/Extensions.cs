@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System.Text;
 
 namespace NetTriple.Emit
 {
@@ -10,6 +9,11 @@ namespace NetTriple.Emit
             if (obj is string)
             {
                 return string.Format("\"{0}\"", obj);
+            }
+
+            if (obj is decimal || obj is double || obj is float)
+            {
+                return obj.ToString().Replace(',', '.');
             }
 
             return obj.ToString();

@@ -153,10 +153,10 @@ namespace NetTriple.Emit
                         return list;
                     });
 
-            var classAttrib = Attribute.GetCustomAttribute(_type, typeof(RdfPropertyOnClassAttribute));
+            var classAttrib = (RdfPropertyOnClassAttribute)Attribute.GetCustomAttribute(_type, typeof(RdfPropertyOnClassAttribute));
             if (classAttrib != null)
             {
-                
+                result.AddRange(classAttrib.GetPropertyPredicateSpecifications(_type));
             }
 
             return result;

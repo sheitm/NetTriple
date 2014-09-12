@@ -46,5 +46,18 @@ namespace NetTriple.Tests.Emit
             // Assert
             Assert.IsNotNull(source);
         }
+
+        [TestMethod]
+        public void GetSourceCode_ForTypeWithClassDecoration_GetsExpectedCode()
+        {
+            // Arrange
+            var generator = new SourceCodeGenerator(typeof(Measurement));
+
+            // Act
+            var source = generator.GetSourceCode();
+
+            // Assert
+            Assert.IsTrue(source.Contains("triples.Add(new Triple { Subject = s, Predicate = \"<http://netriple.com/unittesting/measurement/value>\", Object = obj.Value.ToTripleObject() });"));
+        }
     }
 }

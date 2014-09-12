@@ -38,6 +38,12 @@ namespace NetTriple
                 return (T) o;
             }
 
+            if (typeof (float) == typeof (T))
+            {
+                object o = float.Parse(Object);
+                return (T) o;
+            }
+
             res = Object;
             return (T)res;
         }
