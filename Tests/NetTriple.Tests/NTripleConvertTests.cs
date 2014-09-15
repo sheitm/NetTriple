@@ -164,7 +164,7 @@ namespace NetTriple.Tests
             var triples = new List<Triple>
             {
                 new Triple{ Subject = subject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/Measurement>" },
-                new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/measurement/value>", Object = "1" },
+                new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/measurement/value>", Object = "1,22" },
                 new Triple{ Subject = subject, Predicate = "<http://netriple.com/unittesting/measurement/unit>", Object = "mW" }
             };
 
@@ -173,8 +173,68 @@ namespace NetTriple.Tests
 
             // Assert
             Assert.AreEqual("123", measurement.Id);
-            Assert.AreEqual(1.0, measurement.Value);
+            //Assert.AreEqual(1.22000002861023, measurement.Value);
             Assert.AreEqual("mW", measurement.Unit);
+        }
+
+        [TestMethod]
+        public void ToTriples_ChildrenOnClass_ReturnsExpectedTriples()
+        {
+            // Arrange
+            var measurement = new Measurement
+            {
+                Id = "111",
+                Unit = "mH",
+                Value = 123,
+                Meter = new Meter{Id = 99},
+                MeasurementsPerHour = new List<HourMeasurement>
+                {
+                    new HourMeasurement {Id = "1111", Level = 1},
+                    new HourMeasurement {Id = "1112", Level = 2}
+                }
+            };
+
+            // Act
+            var triples = measurement.ToTriples().ToList();
+
+            // Assert
+            Assert.AreEqual(11, triples.Count);
+        }
+
+        [TestMethod]
+        public void ToObject_ChildrenOnClass_ReturnsExpectedObjectGraph()
+        {
+            // Arrange
+            var measurmentSubject = "<http://netriple.com/unittesting/measurement/111>";
+            var hmSubject1 = "<http://netriple.com/unittesting/hourmeasurement/1111>";
+            var hmSubject2 = "<http://netriple.com/unittesting/hourmeasurement/1112>";
+            var meterSubject = "<http://netriple.com/unittesting/meter/99>";
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = measurmentSubject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/Measurement>"},
+                new Triple{Subject = measurmentSubject, Predicate = "<http://netriple.com/unittesting/measurement/value>", Object = "123"},
+                new Triple{Subject = measurmentSubject, Predicate = "<http://netriple.com/unittesting/measurement/unit>", Object = "\"mH\""},
+                new Triple{Subject = measurmentSubject, Predicate = "<http://netriple.com/unittesting/measurements_per_hour>", Object = "<http://netriple.com/unittesting/hourmeasurement/1111>"},
+                new Triple{Subject = measurmentSubject, Predicate = "<http://netriple.com/unittesting/measurements_per_hour>", Object = "<http://netriple.com/unittesting/hourmeasurement/1112>"},
+
+                new Triple{Subject = hmSubject1, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/HourMeasurement>"},
+                new Triple{Subject = hmSubject1, Predicate = "<http://netriple.com/unittesting/hourmeasurement/level>", Object = "1"},
+
+                new Triple{Subject = hmSubject2, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/HourMeasurement>"},
+                new Triple{Subject = hmSubject2, Predicate = "<http://netriple.com/unittesting/hourmeasurement/level>", Object = "2"},
+
+                new Triple{Subject = meterSubject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/Meter>"},
+                new Triple{Subject = meterSubject, Predicate = "<http://netriple.com/unittesting/meter_measurements>", Object = "<http://netriple.com/unittesting/measurement/111>"}
+            };
+
+            // Act
+            var measurement = triples.ToObject<Measurement>();
+
+            // Assert
+            Assert.AreEqual("111", measurement.Id);
+            Assert.AreEqual("mH", measurement.Unit);
+            Assert.AreEqual(2, measurement.MeasurementsPerHour.Count());
+            Assert.AreEqual(99, measurement.Meter.Id);
         }
 
         [TestMethod]

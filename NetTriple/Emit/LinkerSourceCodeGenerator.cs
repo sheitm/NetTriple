@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using NetTriple.Annotation;
 
 namespace NetTriple.Emit
@@ -18,9 +17,9 @@ namespace NetTriple.Emit
     {
         private readonly Type _type;
         private readonly PropertyInfo _property;
-        private readonly RdfChildrenAttribute _childAttribute;
+        private readonly IChildrenPredicateSpecification _childAttribute;
 
-        public LinkerSourceCodeGenerator(Type type, PropertyInfo property, RdfChildrenAttribute childAttribute)
+        public LinkerSourceCodeGenerator(Type type, PropertyInfo property, IChildrenPredicateSpecification childAttribute)
         {
             _type = type;
             _property = property;

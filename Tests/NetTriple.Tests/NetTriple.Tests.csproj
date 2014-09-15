@@ -53,8 +53,10 @@
     <Compile Include="TestDomain\Book.cs" />
     <Compile Include="TestDomain\BookReview.cs" />
     <Compile Include="TestDomain\Chapter.cs" />
+    <Compile Include="TestDomain\HourMeasurement.cs" />
     <Compile Include="TestDomain\Husband.cs" />
     <Compile Include="TestDomain\Measurement.cs" />
+    <Compile Include="TestDomain\Meter.cs" />
     <Compile Include="TestDomain\NotAnnotated.cs" />
     <Compile Include="TestDomain\Order.cs" />
     <Compile Include="TestDomain\OrderDetail.cs" />

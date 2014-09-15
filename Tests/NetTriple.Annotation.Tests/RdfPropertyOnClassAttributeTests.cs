@@ -23,6 +23,10 @@ namespace NetTriple.Annotation.Tests
 
             // Act
             var specs = attrib.GetPropertyPredicateSpecifications(typeof (Measurement)).ToList();
+
+            // Assert
+            Assert.AreEqual(2, specs.Count);
+            Assert.IsTrue(specs.Any(s => s.Predicate == "http://nettriple/measurement/value" && s.Property.Name == "Value"));
         }
     }
 }

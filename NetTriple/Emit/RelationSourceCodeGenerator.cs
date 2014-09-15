@@ -58,7 +58,7 @@ namespace NetTriple.Emit
             }
         }
 
-        private void AppendNonInverseUnaryRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
+        private void AppendNonInverseUnaryRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
         {
             var propType = property.PropertyType;
             var childSubjectProp = GetNameOfSubjectProperty(propType);
@@ -70,7 +70,7 @@ namespace NetTriple.Emit
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        private void AppendNonInverseRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
+        private void AppendNonInverseRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
         {
             var propType = GetTypeOfProperty(_type, property);
             var childSubjectProp = GetNameOfSubjectProperty(propType);
@@ -82,7 +82,7 @@ namespace NetTriple.Emit
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        private void AppendInverseRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
+        private void AppendInverseRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
         {
             var propType = GetTypeOfProperty(_type, property);
             var childSubjectProp = GetNameOfSubjectProperty(propType);
@@ -94,7 +94,7 @@ namespace NetTriple.Emit
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        private void AppendInverseUnaryRelation(StringBuilder sb, PropertyInfo property, RdfChildrenAttribute attribute)
+        private void AppendInverseUnaryRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
         {
             var propType = property.PropertyType;
             var childSubjectProp = GetNameOfSubjectProperty(propType);
@@ -106,19 +106,28 @@ namespace NetTriple.Emit
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
-        public static IEnumerable<KeyValuePair<PropertyInfo, RdfChildrenAttribute>> GetChildProperties(Type type)
+        public static IEnumerable<KeyValuePair<PropertyInfo, IChildrenPredicateSpecification>> GetChildProperties(Type type)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            var list = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(p => Attribute.GetCustomAttribute(p, typeof (RdfChildrenAttribute)) != null)
                 .Aggregate(
-                    new Dictionary<PropertyInfo, RdfChildrenAttribute>(),
+                    new Dictionary<PropertyInfo, IChildrenPredicateSpecification>(),
                     (accumulator, pi) =>
                     {
-                        var attrib = (RdfChildrenAttribute)Attribute.GetCustomAttribute(pi, typeof (RdfChildrenAttribute));
+                        var attrib =
+                            (RdfChildrenAttribute) Attribute.GetCustomAttribute(pi, typeof (RdfChildrenAttribute));
                         accumulator[pi] = attrib;
                         return accumulator;
                     }
-                );
+                ).ToList();
+
+            var onClassAttrib = (RdfChildrenOnClassAttribute)Attribute.GetCustomAttribute(type, typeof (RdfChildrenOnClassAttribute));
+            if (onClassAttrib != null)
+            {
+                list.AddRange(onClassAttrib.GetChildrenPredicateSpecifications(type));
+            }
+
+            return list;
         }
 
         private Type GetTypeOfProperty(Type owningType, PropertyInfo property)
