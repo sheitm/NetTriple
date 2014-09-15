@@ -134,9 +134,16 @@ namespace NetTriple
         private static string GetSubjectTemplate(Type type)
         {
             var prop = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
-            var attrib = (RdfSubjectAttribute)Attribute.GetCustomAttribute(prop, typeof(RdfSubjectAttribute));
-            return attrib.Template.Replace("{0}", "");
+                .SingleOrDefault(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+
+            if (prop != null)
+            {
+                var attrib = (RdfSubjectAttribute)Attribute.GetCustomAttribute(prop, typeof(RdfSubjectAttribute));
+                return attrib.Template.Replace("{0}", "");
+            }
+
+            var cAttr = (RdfSubjectOnClassAttribute)Attribute.GetCustomAttribute(type, typeof (RdfSubjectOnClassAttribute));
+            return cAttr.Template.Replace("{0}", "");
         }
 
         /// <summary>

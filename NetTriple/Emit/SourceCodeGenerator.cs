@@ -123,17 +123,34 @@ namespace NetTriple.Emit
         private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type)
         {
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+                .SingleOrDefault(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
 
-            var attrib = (RdfSubjectAttribute)Attribute.GetCustomAttribute(property, typeof(RdfSubjectAttribute));
+            string template;
+            if (property == null)
+            {
+                var classAttrib = (RdfSubjectOnClassAttribute) Attribute.GetCustomAttribute(type, typeof (RdfSubjectOnClassAttribute));
+                property = type.GetProperty(classAttrib.Property, BindingFlags.Instance | BindingFlags.Public);
+                template = classAttrib.Template;
+            }
+            else
+            {
+                template = ((RdfSubjectAttribute)Attribute.GetCustomAttribute(property, typeof(RdfSubjectAttribute))).Template;
+            }
 
-            return new KeyValuePair<string, string>(property.Name, attrib.Template);
+
+            return new KeyValuePair<string, string>(property.Name, template);
         }
 
         private Type GetTypeOfSubjectProperty(Type type)
         {
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+                .SingleOrDefault(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+
+            if (property == null)
+            {
+                var classAttrib = (RdfSubjectOnClassAttribute)Attribute.GetCustomAttribute(type, typeof (RdfSubjectOnClassAttribute));
+                property = type.GetProperty(classAttrib.Property, BindingFlags.Instance | BindingFlags.Public);
+            }
 
             return property.PropertyType;
         }

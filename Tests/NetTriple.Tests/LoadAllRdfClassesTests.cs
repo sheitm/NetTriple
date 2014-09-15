@@ -99,5 +99,13 @@ namespace NetTriple.Tests
             // Act
             LoadAllRdfClasses.LoadFromAssemblyOf<Book>();
         }
+
+        [TestMethod]
+        public void LoadFromAssemblyOf_Twice_NoCrash()
+        {
+            // Act
+            LoadAllRdfClasses.LoadFromAssemblyOf<Book>();
+            LoadAllRdfClasses.LoadFromAssemblyOf<Book>();
+        }
     }
 }

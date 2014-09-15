@@ -52,6 +52,7 @@
     <Compile Include="SampleConverter.cs" />
     <Compile Include="TestDomain\Book.cs" />
     <Compile Include="TestDomain\BookReview.cs" />
+    <Compile Include="TestDomain\Car.cs" />
     <Compile Include="TestDomain\Chapter.cs" />
     <Compile Include="TestDomain\HourMeasurement.cs" />
     <Compile Include="TestDomain\Husband.cs" />

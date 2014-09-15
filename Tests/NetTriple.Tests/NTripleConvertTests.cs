@@ -109,6 +109,36 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToTriple_SubjectOnClass_GetsTriplesAsExpected()
+        {
+            // Arrange
+            var car = new Car {Id = "XXYY"};
+
+            // Act
+            var triples = car.ToTriples();
+
+            // Assert
+            Assert.IsTrue(triples.Any(triple => triple.ToString() == "<http://netriple.com/unittesting/car/XXYY> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://netriple.com/unittesting/Car>"));
+
+        }
+
+        [TestMethod]
+        public void ToObject_SubjectOnClass_GetsObjectAsExpected()
+        {
+            // Arrange
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = "<http://netriple.com/unittesting/car/990088>", Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/Car>"}
+            };
+
+            // Act
+            var car = triples.ToObject<Car>();
+
+            // Assert
+            Assert.AreEqual("990088", car.Id);
+        }
+
+        [TestMethod]
         public void ToTriple_InstanceWithUnaryRelation_ReturnsExpectedTriples()
         {
             // Arrange

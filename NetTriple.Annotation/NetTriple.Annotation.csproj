@@ -49,6 +49,7 @@
     <Compile Include="RdfPropertyAttribute.cs" />
     <Compile Include="RdfPropertyOnClassAttribute.cs" />
     <Compile Include="RdfSubjectAttribute.cs" />
+    <Compile Include="RdfSubjectOnClassAttribute.cs" />
     <Compile Include="RdfTypeAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
