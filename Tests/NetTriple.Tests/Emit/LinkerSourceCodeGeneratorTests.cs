@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Annotation;
+using NetTriple.Annotation.Fluency;
 using NetTriple.Emit;
 using NetTriple.Tests.TestDomain;
 
@@ -111,6 +112,30 @@ namespace NetTriple.Tests.Emit
             // Assert
             var code = sb.ToString();
             Assert.IsTrue(code.StartsWith("obj.Wife = context.GetInverse<NetTriple.Tests.TestDomain.Wife>(s, \"http://netriple.com/unittesting/wife_to_husband\");"));
+        }
+
+        [TestMethod]
+        public void AppendSourceCode_ForArray_AppendsExpectedCode()
+        {
+            // Arrange
+            var property = typeof (Tournament).GetProperty("Players");
+            
+            var built = BuildTransform.For<Tournament>("http://nettriple/Tournament")
+                .Subject(t => t.Id, "http://nettriple/tournament/{0}")
+                .WithPropertyPredicateBase("http://nettriple/tournament")
+                .Prop(t => t.Id, "/id")
+                .Prop(t => t.Name, "/name")
+                .Relation(t => t.Players, "http://nettriple/player/tournament_participation", true);
+
+            var generator = new LinkerSourceCodeGenerator(typeof (Tournament), property, built.RelationSpecifications.First(), built);
+            var sb = new StringBuilder();
+
+            // Act
+            generator.AppendSourceCode(sb);
+
+            // Assert
+            var code = sb.ToString();
+            Assert.IsTrue(code.Contains("ToArray();"));
         }
     }
 }

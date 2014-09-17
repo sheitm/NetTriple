@@ -64,6 +64,7 @@
     <Compile Include="TestDomain\Order.cs" />
     <Compile Include="TestDomain\OrderDetail.cs" />
     <Compile Include="TestDomain\Player.cs" />
+    <Compile Include="TestDomain\Tournament.cs" />
     <Compile Include="TestDomain\Wife.cs" />
     <Compile Include="TripleTests.cs" />
   </ItemGroup>

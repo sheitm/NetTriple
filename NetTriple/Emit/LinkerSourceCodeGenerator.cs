@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using NetTriple.Annotation;
 using NetTriple.Annotation.Fluency;
+using NetTriple.Annotation.Internal;
 
 namespace NetTriple.Emit
 {
@@ -50,11 +51,18 @@ namespace NetTriple.Emit
         private void AppendEnumerableSourceCode(StringBuilder sb)
         {
             var getterMethod = _childAttribute.Inverse ? "GetAllInverse" : "GetAll";
-            var innerType = _property.PropertyType.GenericTypeArguments[0];
+            var innerType = _property.GetTypeOfProperty(); //_property.PropertyType.GenericTypeArguments[0];
             sb.AppendFormat("var all{0} = context.{3}<{1}>(s, \"{2}\");\r\n", _property.Name, innerType.FullName, _childAttribute.Predicate, getterMethod);
             sb.AppendFormat("if (all{0} != null && all{0}.Count() > 0)\r\n", _property.Name);
             sb.Append("{\r\n");
-            sb.AppendFormat("obj.{0} = all{0};\r\n", _property.Name);
+            if (_property.PropertyType.IsArray)
+            {
+                sb.AppendFormat("obj.{0} = all{0}.ToArray();\r\n", _property.Name);
+            }
+            else
+            {
+                sb.AppendFormat("obj.{0} = all{0};\r\n", _property.Name);
+            }
             sb.Append("}\r\n");
         }
 

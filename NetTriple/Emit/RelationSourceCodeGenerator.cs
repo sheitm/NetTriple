@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NetTriple.Annotation;
 using NetTriple.Annotation.Fluency;
+using NetTriple.Annotation.Internal;
 
 namespace NetTriple.Emit
 {
@@ -81,7 +82,7 @@ namespace NetTriple.Emit
 
         private void AppendNonInverseRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
         {
-            var propType = GetTypeOfProperty(_type, property);
+            var propType = property.GetTypeOfProperty();
             var childSubjectProp = GetNameOfSubjectProperty(propType, _transform);
             var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
             var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
@@ -93,7 +94,7 @@ namespace NetTriple.Emit
 
         private void AppendInverseRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
         {
-            var propType = GetTypeOfProperty(_type, property);
+            var propType = property.GetTypeOfProperty();
             var childSubjectProp = GetNameOfSubjectProperty(propType, _transform);
             var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
             var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
@@ -149,15 +150,6 @@ namespace NetTriple.Emit
             }
 
             return list;
-        }
-
-        private Type GetTypeOfProperty(Type owningType, PropertyInfo property)
-        {
-            var pType = property.PropertyType;
-
-            return pType.GenericTypeArguments == null
-                ? pType
-                : pType.GenericTypeArguments[0];
         }
 
         private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type, IBuiltTransform transform)

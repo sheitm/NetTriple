@@ -42,5 +42,25 @@ namespace NetTriple.Annotation.Internal
 
             throw new InvalidOperationException();
         }
+
+        /// <summary>
+        /// Gets the type of the property. For non-list and non-generic properties, this is
+        /// the declared types. For generic and enumerable types this is the inner type.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static Type GetTypeOfProperty(this PropertyInfo property)
+        {
+            var pType = property.PropertyType;
+
+            if (pType.IsArray)
+            {
+                return pType.GetElementType();
+            }
+
+            return pType.GenericTypeArguments == null || pType.GenericTypeArguments.Length == 0
+                ? pType
+                : pType.GenericTypeArguments[0];
+        }
     }
 }

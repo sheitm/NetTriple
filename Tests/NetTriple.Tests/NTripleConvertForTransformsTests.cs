@@ -201,5 +201,98 @@ namespace NetTriple.Tests
                 Console.WriteLine(triple);
             }
         }
+
+        [TestMethod]
+        public void ToTriples_DefinedByTransformWithArray_CreatesExpectedTriples()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Tournament>("http://nettriple/Tournament")
+                    .Subject(t => t.Id, "http://nettriple/tournament/{0}")
+                    .Relation(t => t.Players, "http://nettriple/player/tournament_participation", true)
+                    .WithPropertyPredicateBase("http://nettriple/tournament")
+                    .Prop(t => t.Id, "/id")
+                    .Prop(t => t.Name, "/name"),
+                BuildTransform.For<Player>("http://nettriple/Player")
+                    .Subject(p => p.Id, "http://nettriple/player/{0}")
+                    .WithPropertyPredicateBase("http://nettriple/player")
+                    .Prop(p => p.Id, "/id")
+                    .Prop(p => p.Name, "/name")
+                    .Prop(p => p.Gender, "/gender")
+                    .Prop(p => p.DateOfBirth, "/dateOfBirth"));
+
+            var tournament = new Tournament
+            {
+                Id = 5,
+                Name = "Wimbledon",
+                Players = new Player[]
+                {
+                    new Player
+                    {
+                        Id = "997766",
+                        Name = "Bjørn Borg",
+                        Gender = Gender.Male,
+                        DateOfBirth = new DateTime(1955, 12, 4)
+                    },
+                    new Player
+                    {
+                        Id = "1001",
+                        Name = "John McEnroe",
+                        Gender = Gender.Male,
+                        DateOfBirth = new DateTime(1959, 2, 16)
+                    }
+                }
+            };
+
+            // Act
+            var triples = tournament.ToTriples();
+
+            // Assert
+            Assert.AreEqual(2, triples.Count(t => 
+                t.Predicate == "<http://nettriple/player/tournament_participation>"
+                && t.Object == "<http://nettriple/tournament/5>"));
+        }
+
+        [TestMethod]
+        public void ToObject_WithArray_ArrayFilledAsExpected()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Tournament>("http://nettriple/Tournament")
+                    .Subject(t => t.Id, "http://nettriple/tournament/{0}")
+                    .Relation(t => t.Players, "http://nettriple/player/tournament_participation", true)
+                    .WithPropertyPredicateBase("http://nettriple/tournament")
+                    .Prop(t => t.Id, "/id")
+                    .Prop(t => t.Name, "/name"),
+                BuildTransform.For<Player>("http://nettriple/Player")
+                    .Subject(p => p.Id, "http://nettriple/player/{0}")
+                    .WithPropertyPredicateBase("http://nettriple/player")
+                    .Prop(p => p.Id, "/id")
+                    .Prop(p => p.Name, "/name")
+                    .Prop(p => p.Gender, "/gender")
+                    .Prop(p => p.DateOfBirth, "/dateOfBirth"));
+
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = "<http://nettriple/tournament/5>", Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriple/Tournament>"},
+                new Triple{Subject = "<http://nettriple/tournament/5>", Predicate = "<http://nettriple/tournament/id>", Object = "5"},
+
+                new Triple{Subject = "<http://nettriple/player/997766>", Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriple/Player>"},
+                new Triple{Subject = "<http://nettriple/player/997766>", Predicate = "<http://nettriple/player/id>", Object = "\"997766\""},
+                new Triple{Subject = "<http://nettriple/player/997766>", Predicate = "<http://nettriple/player/tournament_participation>", Object = "<http://nettriple/tournament/5>"},
+
+                new Triple{Subject = "<http://nettriple/player/1001>", Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriple/Player>"},
+                new Triple{Subject = "<http://nettriple/player/1001>", Predicate = "<http://nettriple/player/id>", Object = "\"1001\""},
+                new Triple{Subject = "<http://nettriple/player/1001>", Predicate = "<http://nettriple/player/tournament_participation>", Object = "<http://nettriple/tournament/5>"}
+            };
+
+            // Act
+            var tournament = triples.ToObject<Tournament>();
+
+            // Assert
+            Assert.AreEqual(2, tournament.Players.Length);
+            Assert.IsTrue(tournament.Players.Any(p => p.Id == "1001"));
+            Assert.IsTrue(tournament.Players.Any(p => p.Id == "997766"));
+        }
     }
 }
