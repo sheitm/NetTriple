@@ -72,6 +72,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TemplateResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Emit\TransformLocator.cs" />
     <Compile Include="LoadAllRdfClasses.cs" />
     <Compile Include="NTripleConvert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

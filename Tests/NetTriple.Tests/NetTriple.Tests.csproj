@@ -56,11 +56,13 @@
     <Compile Include="TestDomain\Chapter.cs" />
     <Compile Include="TestDomain\HourMeasurement.cs" />
     <Compile Include="TestDomain\Husband.cs" />
+    <Compile Include="TestDomain\Match.cs" />
     <Compile Include="TestDomain\Measurement.cs" />
     <Compile Include="TestDomain\Meter.cs" />
     <Compile Include="TestDomain\NotAnnotated.cs" />
     <Compile Include="TestDomain\Order.cs" />
     <Compile Include="TestDomain\OrderDetail.cs" />
+    <Compile Include="TestDomain\Player.cs" />
     <Compile Include="TestDomain\Wife.cs" />
     <Compile Include="TripleTests.cs" />
   </ItemGroup>

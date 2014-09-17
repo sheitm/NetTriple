@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using NetTriple.Annotation;
+using NetTriple.Annotation.Fluency;
 using NetTriple.Emit;
 
 namespace NetTriple
@@ -48,6 +49,23 @@ namespace NetTriple
             {
                 LoadFromAssembly(assembly);
             }
+        }
+
+
+        public static void LoadTransforms(params IBuiltTransform[] transforms)
+        {
+            if (transforms == null)
+            {
+                return;
+            }
+
+            var locator = new TransformLocator(transforms);
+            foreach (var builtTransform in transforms)
+            {
+                builtTransform.SetLocator(locator);
+            }
+
+            LoadTypes(new List<Type>(), transforms);
         }
 
         public static void LoadFromAssemblyOf<T>()
@@ -94,20 +112,26 @@ namespace NetTriple
             var types = assembly.GetTypes()
                 .Where(t => Attribute.GetCustomAttribute(t, typeof(RdfTypeAttribute)) != null);
 
-            LoadTypes(types);
+            LoadTypes(types, new List<IBuiltTransform>());
         }
 
-        private static void LoadTypes(IEnumerable<Type> types)
+        private static void LoadTypes(IEnumerable<Type> types, IEnumerable<IBuiltTransform> transforms)
         {
-            var typs = types.ToList();
-            var sourceCode = GetSourceCode(typs);
-            Compile(sourceCode, typs);
+            var typs = types == null ? new List<Type>() : types.ToList();
+            var trnsfrms = transforms == null ? new List<IBuiltTransform>() : transforms.ToList();
+            var sourceCode = GetSourceCode(typs, trnsfrms);
 
-            LoadSubjectTemplates(typs);
-            LoadRelationTemplates(typs);
+            var typesForCompile = new List<Type>();
+            typesForCompile.AddRange(typs);
+            typesForCompile.AddRange(trnsfrms.Select(t => t.Type));
+
+            Compile(sourceCode, typesForCompile);
+
+            LoadSubjectTemplates(typs, trnsfrms);
+            LoadRelationTemplates(typs, trnsfrms);
         }
 
-        private static void LoadRelationTemplates(IEnumerable<Type> types)
+        private static void LoadRelationTemplates(IEnumerable<Type> types, IEnumerable<IBuiltTransform> transforms)
         {
             foreach (var type in types)
             {
@@ -123,11 +147,22 @@ namespace NetTriple
             }
         }
 
-        private static void LoadSubjectTemplates(IEnumerable<Type> types)
+        private static void LoadSubjectTemplates(IEnumerable<Type> types, IEnumerable<IBuiltTransform> transforms)
         {
-            foreach (var type in types)
+            foreach (var type in types ?? new Type[0])
             {
                 SubjectMap.Add(GetSubjectTemplate(type), type);
+            }
+
+            foreach (var transform in transforms ?? new IBuiltTransform[0])
+            {
+                var key = transform.SubjectSpecification.Template.Replace("{0}", "");
+                if (SubjectMap.ContainsKey(key))
+                {
+                    throw new InvalidOperationException(string.Format("Transform with subject {0} already added.", key));
+                }
+
+                SubjectMap.Add(key, transform.Type);
             }
         }
 
@@ -171,10 +206,20 @@ namespace NetTriple
             return new ConverterLocator(ConverterMap, SubjectMap);
         }
 
-        private static string GetSourceCode(IEnumerable<Type> types)
+        private static string GetSourceCode(IEnumerable<Type> types, IEnumerable<IBuiltTransform> transforms)
         {
-            var classSources = types
-                .Select(t => new SourceCodeGenerator(t).GetSourceCode())
+            var codeList = new List<string>();
+            if (types != null)
+            {
+                codeList.AddRange(types.Select(t => new SourceCodeGenerator(t).GetSourceCode()));
+            }
+
+            if (transforms != null)
+            {
+                codeList.AddRange(transforms.Select(t => new SourceCodeGenerator(t).GetSourceCode()));
+            }
+
+            var classSources = codeList
                 .Aggregate(
                     new StringBuilder(),
                     (sb, sourceCode) =>

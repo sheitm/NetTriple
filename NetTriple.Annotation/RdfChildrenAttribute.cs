@@ -7,6 +7,7 @@ namespace NetTriple.Annotation
     public class RdfChildrenAttribute : Attribute, IChildrenPredicateSpecification
     {
         public bool Inverse { get; set; }
+        public PropertyInfo Property { get; set; }
         public string Predicate { get; set; }
     }
 }

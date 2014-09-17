@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NetTriple.Annotation.Fluency;
 using NetTriple.Emit;
 using NetTriple.Tests.TestDomain;
 
@@ -62,6 +63,38 @@ namespace NetTriple.Tests.Emit
         {
             // Arrange
             var generator = new RelationSourceCodeGenerator(typeof(Husband));
+
+            // Act
+            var sourceCode = generator.GetConversionScript();
+
+            // Assert
+            Console.WriteLine(sourceCode);
+        }
+
+        [TestMethod]
+        public void GetConversionScript_UnaryRelationsDefinedByTransforms_GeneratesExpectedCode()
+        {
+            // Arrange
+            var built = BuildTransform.For<Match>("http://nettriple/Match")
+                .Subject(p => p.Id, "http://nettriple/match/{0}")
+                .WithPropertyPredicateBase("http://nettriple/match")
+                .Prop(p => p.Id, "/id")
+                .Prop(p => p.Date, "/date")
+                .Relation(m => m.Player1, "/player_1")
+                .Relation(m => m.Player2, "/player_2");
+
+            LoadAllRdfClasses.LoadTransforms(
+                built,
+                BuildTransform.For<Player>("http://nettriple/Player")
+                .Subject(p => p.Id, "http://nettriple/player/{0}")
+                .WithPropertyPredicateBase("http://nettriple/player")
+                .Prop(p => p.Id, "/id")
+                .Prop(p => p.Name, "/name")
+                .Prop(p => p.Gender, "/gender")
+                .Prop(p => p.DateOfBirth, "/dateOfBirth")
+                );
+
+            var generator = new RelationSourceCodeGenerator(built);
 
             // Act
             var sourceCode = generator.GetConversionScript();

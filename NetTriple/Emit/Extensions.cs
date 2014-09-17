@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace NetTriple.Emit
 {
@@ -14,6 +15,11 @@ namespace NetTriple.Emit
             if (obj is decimal || obj is double || obj is float)
             {
                 return obj.ToString().Replace(',', '.');
+            }
+
+            if (obj is DateTime)
+            {
+                return "\"" + ((DateTime)obj).ToString("u").Replace(" ", "T") + "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>";
             }
 
             return obj.ToString();

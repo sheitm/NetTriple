@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using NetTriple.Annotation;
+using NetTriple.Annotation.Fluency;
 
 namespace NetTriple.Emit
 {
@@ -11,6 +12,13 @@ namespace NetTriple.Emit
     {
         private readonly Type _type;
         private readonly RdfTypeAttribute _rdfTypeAttribute;
+
+        private readonly IBuiltTransform _transform;
+
+        public SourceCodeGenerator(IBuiltTransform transform)
+        {
+            _transform = transform;
+        }
 
         public SourceCodeGenerator(Type type)
         {
@@ -20,9 +28,10 @@ namespace NetTriple.Emit
 
         public string GetSourceCode()
         {
+            var type = DomainType;
             return TemplateResources.ConverterTemplate
-                .Replace("##CLASS##", _type.Name)
-                .Replace("##FULLCLASS##", _type.FullName)
+                .Replace("##CLASS##", type.Name)
+                .Replace("##FULLCLASS##", type.FullName)
                 .Replace("##CONVERSION##", GetConversionScript())
                 .Replace("##INFLATION##", GetInflationScript())
                 .Replace("##RDFSUBJECT##", GetRdfSubjectTemplate().ToWashedRdfSubject())
@@ -30,22 +39,32 @@ namespace NetTriple.Emit
                 .Replace("##LINKCORE##", GetLinkScript());
         }
 
+        private Type DomainType
+        {
+            get { return _type ?? _transform.Type; }
+        }
+
         private string GetLinkInvocationScript()
         {
-            return string.Format("LinkCore(({0}) obj, context);\r\n", _type.FullName);
+            return string.Format("LinkCore(({0}) obj, context);\r\n", DomainType.FullName);
         }
 
         private string GetLinkScript()
         {
+            var type = DomainType;
             var sb = new StringBuilder();
 
-            sb.AppendFormat("private void LinkCore({0} obj, IInflationContext context)\r\n", _type.FullName);
+            sb.AppendFormat("private void LinkCore({0} obj, IInflationContext context)\r\n", type.FullName);
             sb.AppendLine("{");
 
             var started = false;
-            foreach (var pair in RelationSourceCodeGenerator.GetChildProperties(_type))
+            var childProperties = _transform == null
+                ? RelationSourceCodeGenerator.GetChildProperties(type)
+                : RelationSourceCodeGenerator.GetChildProperties(_transform);
+
+            foreach (var pair in childProperties)
             {
-                var linkGenerator = new LinkerSourceCodeGenerator(_type, pair.Key, pair.Value);
+                var linkGenerator = new LinkerSourceCodeGenerator(type, pair.Key, pair.Value, _transform);
                 if (!started)
                 {
                     started = true;
@@ -92,13 +111,16 @@ namespace NetTriple.Emit
         {
             var sb = new StringBuilder();
 
-            var subjectProperty = GetNameOfSubjectProperty(_type);
+            var subjectProperty = GetNameOfSubjectProperty(DomainType);
             sb.AppendFormat("var s1 = obj.{0}.ToString();\r\n", subjectProperty.Key);
             sb.AppendFormat("var template = \"<{0}>\";\r\n", subjectProperty.Value);
             sb.Append("var s = template.Replace(\"{0}\", s1);\r\n");
 
             sb.Append("triples.Add(new Triple { ");
-            sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = \"<{1}>\"", _rdfTypeAttribute.Predicate, _rdfTypeAttribute.Value);
+            sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = \"<{1}>\"",
+                _rdfTypeAttribute == null ? _transform.TypePredicate : _rdfTypeAttribute.Predicate,
+                _rdfTypeAttribute == null ? _transform.TypeString : _rdfTypeAttribute.Value);
+
             sb.AppendLine(" });");
 
             foreach (var ppInfo in GetRdfProperties())
@@ -108,7 +130,10 @@ namespace NetTriple.Emit
                 sb.AppendLine(" });");
             }
 
-            var relationGenerator = new RelationSourceCodeGenerator(_type);
+            var relationGenerator = _transform == null
+                ? new RelationSourceCodeGenerator(_type)
+                : new RelationSourceCodeGenerator(_transform);
+
             relationGenerator.AppendConversionScript(sb);
 
             return sb.ToString();
@@ -122,6 +147,12 @@ namespace NetTriple.Emit
 
         private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type)
         {
+            if (_transform != null)
+            {
+                var subjSpec = _transform.SubjectSpecification;
+                return new KeyValuePair<string, string>(subjSpec.Property.Name, subjSpec.Template);
+            }
+
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .SingleOrDefault(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
 
@@ -143,6 +174,11 @@ namespace NetTriple.Emit
 
         private Type GetTypeOfSubjectProperty(Type type)
         {
+            if (_transform != null)
+            {
+                return _transform.SubjectSpecification.Property.PropertyType;
+            }
+
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .SingleOrDefault(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
 
@@ -157,6 +193,11 @@ namespace NetTriple.Emit
 
         private IEnumerable<IPropertyPredicateSpecification> GetRdfProperties()
         {
+            if (_transform != null)
+            {
+                return _transform.PropertySpecifications;
+            }
+
             var result = _type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(p => Attribute.GetCustomAttribute(p, typeof(RdfPropertyAttribute)) != null)
                 .Aggregate(

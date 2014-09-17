@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using NetTriple.Annotation;
+using NetTriple.Annotation.Fluency;
 
 namespace NetTriple.Emit
 {
@@ -18,12 +19,14 @@ namespace NetTriple.Emit
         private readonly Type _type;
         private readonly PropertyInfo _property;
         private readonly IChildrenPredicateSpecification _childAttribute;
+        private readonly IBuiltTransform _transform;
 
-        public LinkerSourceCodeGenerator(Type type, PropertyInfo property, IChildrenPredicateSpecification childAttribute)
+        public LinkerSourceCodeGenerator(Type type, PropertyInfo property, IChildrenPredicateSpecification childAttribute, IBuiltTransform transform = null)
         {
             _type = type;
             _property = property;
             _childAttribute = childAttribute;
+            _transform = transform;
         }
 
         public void AppendSourceCode(StringBuilder sb)
@@ -65,6 +68,12 @@ namespace NetTriple.Emit
 
         private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type)
         {
+            if (_transform != null)
+            {
+                var spec = _transform.SubjectSpecification;
+                return new KeyValuePair<string, string>(spec.Property.Name, spec.Template);
+            }
+
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
 

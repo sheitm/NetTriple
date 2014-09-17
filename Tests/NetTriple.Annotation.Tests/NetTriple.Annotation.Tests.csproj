@@ -40,11 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fluency\AllRdfTransformsTests.cs" />
+    <Compile Include="Fluency\TransformBuilderTests.cs" />
+    <Compile Include="Internal\ReflectionHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RdfChildrenOnClassAttributeTests.cs" />
     <Compile Include="RdfPropertyOnClassAttributeTests.cs" />
     <Compile Include="TestDomain\HourMeasurement.cs" />
+    <Compile Include="TestDomain\Match.cs" />
     <Compile Include="TestDomain\Measurement.cs" />
+    <Compile Include="TestDomain\Player.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\NetTriple.Annotation\NetTriple.Annotation.csproj">

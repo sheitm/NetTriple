@@ -34,7 +34,17 @@ namespace NetTriple
 
             if (typeof (DateTime) == typeof (T))
             {
-                object o = DateTime.Parse(Object);
+                object o;
+                if (Object.Contains("^^"))
+                {
+                    var d = Object.Substring(1, Object.IndexOf("^^") - 3);
+                    o = DateTime.Parse(d);
+                }
+                else
+                {
+                    o = DateTime.Parse(Object);
+                }
+
                 return (T) o;
             }
 
@@ -42,6 +52,11 @@ namespace NetTriple
             {
                 object o = float.Parse(Object);
                 return (T) o;
+            }
+
+            if (typeof (T).IsEnum)
+            {
+                return (T) Enum.Parse(typeof (T), Object);
             }
 
             res = Object;
