@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Annotation.Fluency;
 using NetTriple.Emit;
 using NetTriple.Tests.TestDomain;
@@ -91,16 +92,17 @@ namespace NetTriple.Tests.Emit
                .Relation(m => m.Player1, "/player_1")
                .Relation(m => m.Player2, "/player_2");
 
-            LoadAllRdfClasses.LoadTransforms(
-                built,
-                BuildTransform.For<Player>("http://nettriple/Player")
+            var built2 = BuildTransform.For<Player>("http://nettriple/Player")
                 .Subject(p => p.Id, "http://nettriple/player/{0}")
                 .WithPropertyPredicateBase("http://nettriple/player")
                 .Prop(p => p.Id, "/id")
                 .Prop(p => p.Name, "/name")
                 .Prop(p => p.Gender, "/gender")
-                .Prop(p => p.DateOfBirth, "/dateOfBirth")
-                );
+                .Prop(p => p.DateOfBirth, "/dateOfBirth");
+
+            var locator = new TransformLocator(new List<IBuiltTransform> { built, built2 });
+            built.SetLocator(locator);
+            built2.SetLocator(locator);
 
             var generator = new SourceCodeGenerator(built);
 

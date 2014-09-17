@@ -21,7 +21,19 @@ namespace NetTriple
         private static readonly Dictionary<Type, IConverter> ConverterMap = new Dictionary<Type, IConverter>();
         private static readonly Dictionary<string, Type> SubjectMap = new Dictionary<string, Type>();
         private static readonly List<DeclaredRelation> DeclaredRelations = new List<DeclaredRelation>(); 
-        private static readonly List<Assembly> LoadedAssemblies = new List<Assembly>(); 
+        private static readonly List<Assembly> LoadedAssemblies = new List<Assembly>();
+
+        /// <summary>
+        /// Empties all inner structure. Should normally only be used
+        /// in test scenarios
+        /// </summary>
+        public static void Clear()
+        {
+            ConverterMap.Clear();
+            SubjectMap.Clear();
+            DeclaredRelations.Clear();
+            LoadedAssemblies.Clear();
+        }
 
         /// <summary>
         /// Finds all classes that are decorated with the RdfTypeAttribute

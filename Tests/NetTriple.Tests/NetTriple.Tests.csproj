@@ -47,6 +47,7 @@
     <Compile Include="Emit\RelationSourceCodeGeneratorTests.cs" />
     <Compile Include="Emit\SourceCodeGeneratorTests.cs" />
     <Compile Include="LoadAllRdfClassesTests.cs" />
+    <Compile Include="NTripleConvertForTransformsTests.cs" />
     <Compile Include="NTripleConvertTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleConverter.cs" />

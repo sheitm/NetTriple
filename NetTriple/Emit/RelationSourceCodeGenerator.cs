@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NetTriple.Annotation;
 using NetTriple.Annotation.Fluency;
 
@@ -173,7 +174,7 @@ namespace NetTriple.Emit
             }
 
             var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+                                    .Single(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
 
             var attrib = (RdfSubjectAttribute)Attribute.GetCustomAttribute(property, typeof(RdfSubjectAttribute));
 
