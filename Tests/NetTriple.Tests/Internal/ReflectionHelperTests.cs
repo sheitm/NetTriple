@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Annotation.Internal;
-using NetTriple.Annotation.Tests.TestDomain;
+using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Annotation.Tests.Internal
 {
@@ -66,6 +62,47 @@ namespace NetTriple.Annotation.Tests.Internal
 
             // Assert
             Assert.AreSame(typeof(Player), type);
+        }
+
+        [TestMethod]
+        public void Deserialize_ForDateTime_GetsExpectedDateTime()
+        {
+            // Arrange
+            var s = "\"1959-02-16T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>";
+
+            // Act
+            var d = ReflectionHelper.Deserialize<DateTime>(s);
+
+            // Assert
+            Assert.AreEqual(1959, d.Year);
+            Assert.AreEqual(2, d.Month);
+            Assert.AreEqual(16, d.Day);
+        }
+
+        [TestMethod]
+        public void Deserialize_DecimalWithComma_GetsExpectedDecimal()
+        {
+            // Arrange
+            var s = "123455,667";
+
+            // Act
+            var d = ReflectionHelper.Deserialize<decimal>(s);
+
+            // Assert
+            Assert.AreEqual((decimal)123455.667, d);
+        }
+
+        [TestMethod]
+        public void Deserialize_DecimalWithDot_GetsExpectedDecimal()
+        {
+            // Arrange
+            var s = "123455.667";
+
+            // Act
+            var d = ReflectionHelper.Deserialize<decimal>(s);
+
+            // Assert
+            Assert.AreEqual((decimal)123455.667, d);
         }
     }
 }

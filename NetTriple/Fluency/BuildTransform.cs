@@ -6,5 +6,10 @@
         {
             return new TransformBuilder<T>(typeString);
         }
+
+        public static TransformBuilder<T> For<T>(string typeString, string typePredicate)
+        {
+            return new TransformBuilder<T>(typeString, typePredicate);
+        }
     }
 }

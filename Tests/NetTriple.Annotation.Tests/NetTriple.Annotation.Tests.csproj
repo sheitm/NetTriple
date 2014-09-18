@@ -40,12 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fluency\AllRdfTransformsTests.cs" />
-    <Compile Include="Fluency\TransformBuilderTests.cs" />
-    <Compile Include="Internal\ReflectionHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RdfChildrenOnClassAttributeTests.cs" />
-    <Compile Include="RdfPropertyOnClassAttributeTests.cs" />
     <Compile Include="TestDomain\HourMeasurement.cs" />
     <Compile Include="TestDomain\Match.cs" />
     <Compile Include="TestDomain\Measurement.cs" />
@@ -60,6 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Fluency\" />
+    <Folder Include="Internal\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

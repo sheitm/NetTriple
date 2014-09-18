@@ -39,26 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChildrenPredicateSpecification.cs" />
-    <Compile Include="Fluency\AllRdfTransforms.cs" />
-    <Compile Include="Fluency\BuildTransform.cs" />
-    <Compile Include="Fluency\IBuiltTransform.cs" />
-    <Compile Include="Fluency\ITransformLocator.cs" />
-    <Compile Include="Fluency\TransformBuilder.cs" />
-    <Compile Include="IChildrenPredicateSpecification.cs" />
-    <Compile Include="Internal\ReflectionHelper.cs" />
-    <Compile Include="IPropertyPredicateSpecification.cs" />
-    <Compile Include="ISubjectSpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyPredicateSpecification.cs" />
-    <Compile Include="RdfChildrenAttribute.cs" />
-    <Compile Include="RdfChildrenOnClassAttribute.cs" />
-    <Compile Include="RdfPropertyAttribute.cs" />
-    <Compile Include="RdfPropertyOnClassAttribute.cs" />
-    <Compile Include="RdfSubjectAttribute.cs" />
-    <Compile Include="RdfSubjectOnClassAttribute.cs" />
-    <Compile Include="RdfTypeAttribute.cs" />
-    <Compile Include="SubjectSpecification.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Fluency\" />
+    <Folder Include="Internal\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

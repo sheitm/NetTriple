@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Annotation.Fluency;
-using NetTriple.Annotation.Tests.TestDomain;
+using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Annotation.Tests.Fluency
 {

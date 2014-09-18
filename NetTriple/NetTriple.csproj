@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildrenPredicateSpecification.cs" />
     <Compile Include="Emit\ConverterLocator.cs" />
     <Compile Include="Emit\Extensions.cs" />
     <Compile Include="Emit\IConverter.cs" />
@@ -73,16 +74,28 @@
       <DependentUpon>TemplateResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Emit\TransformLocator.cs" />
+    <Compile Include="Fluency\AllRdfTransforms.cs" />
+    <Compile Include="Fluency\BuildTransform.cs" />
+    <Compile Include="Fluency\IBuiltTransform.cs" />
+    <Compile Include="Fluency\ITransformLocator.cs" />
+    <Compile Include="Fluency\TransformBuilder.cs" />
+    <Compile Include="IChildrenPredicateSpecification.cs" />
+    <Compile Include="Internal\ReflectionHelper.cs" />
+    <Compile Include="IPropertyPredicateSpecification.cs" />
+    <Compile Include="ISubjectSpecification.cs" />
     <Compile Include="LoadAllRdfClasses.cs" />
     <Compile Include="NTripleConvert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyPredicateSpecification.cs" />
+    <Compile Include="RdfChildrenAttribute.cs" />
+    <Compile Include="RdfChildrenOnClassAttribute.cs" />
+    <Compile Include="RdfPropertyAttribute.cs" />
+    <Compile Include="RdfPropertyOnClassAttribute.cs" />
+    <Compile Include="RdfSubjectAttribute.cs" />
+    <Compile Include="RdfSubjectOnClassAttribute.cs" />
+    <Compile Include="RdfTypeAttribute.cs" />
+    <Compile Include="SubjectSpecification.cs" />
     <Compile Include="Triple.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NetTriple.Annotation\NetTriple.Annotation.csproj">
-      <Project>{743a40fe-587b-4a0b-9caa-64d59b4b9a3c}</Project>
-      <Name>NetTriple.Annotation</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Emit\TemplateResources.resx">
@@ -93,6 +106,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

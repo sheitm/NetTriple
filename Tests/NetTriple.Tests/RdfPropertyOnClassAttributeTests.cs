@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetTriple.Annotation.Tests.TestDomain;
+using NetTriple.Annotation;
+using NetTriple.Tests.TestDomain;
 
-namespace NetTriple.Annotation.Tests
+namespace NetTriple.Tests
 {
     [TestClass]
     public class RdfPropertyOnClassAttributeTests

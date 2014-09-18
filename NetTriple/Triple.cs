@@ -1,4 +1,5 @@
 ﻿using System;
+using NetTriple.Annotation.Internal;
 
 namespace NetTriple
 {
@@ -20,47 +21,7 @@ namespace NetTriple
 
         public T GetObject<T>()
         {
-            object res;
-            if (typeof(int) == typeof(T))
-            {
-                res = int.Parse(Object);
-                return (T)res;
-            }
-
-            if (typeof(string) == typeof(T))
-            {
-                return (T)WashStringObject();
-            }
-
-            if (typeof (DateTime) == typeof (T))
-            {
-                object o;
-                if (Object.Contains("^^"))
-                {
-                    var d = Object.Substring(1, Object.IndexOf("^^") - 3);
-                    o = DateTime.Parse(d);
-                }
-                else
-                {
-                    o = DateTime.Parse(Object);
-                }
-
-                return (T) o;
-            }
-
-            if (typeof (float) == typeof (T))
-            {
-                object o = float.Parse(Object);
-                return (T) o;
-            }
-
-            if (typeof (T).IsEnum)
-            {
-                return (T) Enum.Parse(typeof (T), Object);
-            }
-
-            res = Object;
-            return (T)res;
+            return ReflectionHelper.Deserialize<T>(Object);
         }
 
         public bool IsMatch(string subject, string predicate)
