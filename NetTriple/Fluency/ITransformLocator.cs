@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NetTriple.Annotation.Fluency
+namespace NetTriple.Fluency
 {
     public interface ITransformLocator
     {

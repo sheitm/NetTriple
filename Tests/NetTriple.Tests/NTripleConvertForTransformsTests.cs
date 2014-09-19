@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetTriple.Annotation.Fluency;
+using NetTriple.Emit;
+using NetTriple.Fluency;
 using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Tests
@@ -293,6 +294,94 @@ namespace NetTriple.Tests
             Assert.AreEqual(2, tournament.Players.Length);
             Assert.IsTrue(tournament.Players.Any(p => p.Id == "1001"));
             Assert.IsTrue(tournament.Players.Any(p => p.Id == "997766"));
+        }
+
+        [TestMethod]
+        public void ToTriples_WithStruct_GeneratesExpectedTriples()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Sr>("http://psi.hafslund.no/sesam/quant/meterreading-day")
+               .Subject(s => s.Id, "http://psi.hafslund.no/sesam/quant/meterreading-day/{0}")
+               .WithPropertyPredicateBase("http://psi.hafslund.no/sesam/quant/schema")
+               .Prop(s => s.Id, "/id")
+               .Prop(s => s.Mpt, "/mpt")
+               .Prop(s => s.Msno, "/msno")
+               .Prop(s => s.Rty, "/rty")
+               .Prop(s => s.Vty, "/vty")
+               .Prop(s => s.Un, "/un")
+               .Struct<Mv>(s => s.MeterValues, "/values",
+                   x => x.Val,
+                   x => x.Ts,
+                   x => x.Interval,
+                   x => x.Cm,
+                   x => x.Sts,
+                   x => x.Cst));
+
+            var series = new Sr
+            {
+                Mpt = "707057500032064897",
+                Msno = "510000636",
+                Rty = "REL",
+                Vty = "ECR",
+                Un = "kWh",
+                MeterValues = new List<Mv>
+                {
+                    new Mv{ Val = (decimal)13.348, Ts = new DateTime(2014, 6, 14, 0, 0, 0), Interval = 60, Cm = "GE", Sts = "OK", Cst = "OK"},
+                    new Mv{ Val = (decimal)10.358, Ts = new DateTime(2014, 6, 14, 1, 0, 0), Interval = 60, Cm = "GE", Sts = "OK", Cst = "OK"},
+                }
+            };
+
+            // Act
+            var triples = series.ToTriples();
+
+            // Assert
+            foreach (var triple in triples)
+            {
+                Console.WriteLine(triple);
+            }
+        }
+
+        [TestMethod]
+        public void ToObject_WithStruct_GeneratesExpectedObject()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Sr>("http://psi.hafslund.no/sesam/quant/meterreading-day")
+               .Subject(s => s.Id, "http://psi.hafslund.no/sesam/quant/meterreading-day/{0}")
+               .WithPropertyPredicateBase("http://psi.hafslund.no/sesam/quant/schema")
+               .Prop(s => s.Id, "/id")
+               .Prop(s => s.Mpt, "/mpt")
+               .Prop(s => s.Msno, "/msno")
+               .Prop(s => s.Rty, "/rty")
+               .Prop(s => s.Vty, "/vty")
+               .Prop(s => s.Un, "/un")
+               .Struct<Mv>(s => s.MeterValues, "/values",
+                   x => x.Val,
+                   x => x.Ts,
+                   x => x.Interval,
+                   x => x.Cm,
+                   x => x.Sts,
+                   x => x.Cst));
+
+            var subject =
+                "<http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14>";
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = subject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://psi.hafslund.no/sesam/quant/meterreading-day>"},
+                new Triple{Subject = subject, Predicate = "<http://psi.hafslund.no/sesam/quant/schema/mpt>", Object = "\"707057500032064897\""},
+                new Triple{Subject = subject, Predicate = "<http://psi.hafslund.no/sesam/quant/schema/msno>", Object = "\"510000636\""},
+                new Triple{Subject = subject, Predicate = "<http://psi.hafslund.no/sesam/quant/schema/rty>", Object = "\"REL\""},
+                new Triple{Subject = subject, Predicate = "<http://psi.hafslund.no/sesam/quant/schema/vty>", Object = "\"ECR\""},
+                new Triple{Subject = subject, Predicate = "<http://psi.hafslund.no/sesam/quant/schema/un>", Object = "\"kWh\""},
+                new Triple{Subject = subject, Predicate = "<http://psi.hafslund.no/sesam/quant/schema/values>", Object = "\"13,348;;14.06.2014 00:00:00;;60;;GE;;OK;;OK##10,358;;14.06.2014 01:00:00;;60;;GE;;OK;;OK##10,358;;14.06.2014 02:00:00;;60;;GE;;OK;;OK##\""},
+            };
+
+            // Act
+            var series = triples.ToObject<Sr>();
+
+            // Assert
+            Assert.AreEqual(2, series.MeterValues.Count());
         }
     }
 }

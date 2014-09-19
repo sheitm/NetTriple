@@ -5,8 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using NetTriple.Annotation;
-using NetTriple.Annotation.Fluency;
 using NetTriple.Annotation.Internal;
+using NetTriple.Fluency;
 
 namespace NetTriple.Emit
 {

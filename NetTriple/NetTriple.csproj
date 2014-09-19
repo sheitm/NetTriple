@@ -78,6 +78,8 @@
     <Compile Include="Fluency\BuildTransform.cs" />
     <Compile Include="Fluency\IBuiltTransform.cs" />
     <Compile Include="Fluency\ITransformLocator.cs" />
+    <Compile Include="Fluency\StructureTransform.cs" />
+    <Compile Include="Fluency\StructureTransformElement.cs" />
     <Compile Include="Fluency\TransformBuilder.cs" />
     <Compile Include="IChildrenPredicateSpecification.cs" />
     <Compile Include="Internal\ReflectionHelper.cs" />

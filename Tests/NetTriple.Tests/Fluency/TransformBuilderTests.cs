@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetTriple.Annotation.Fluency;
+using NetTriple.Fluency;
 using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Annotation.Tests.Fluency
@@ -85,6 +85,41 @@ namespace NetTriple.Annotation.Tests.Fluency
             Assert.AreEqual(2, relationSpecs.Count);
             Assert.IsTrue(relationSpecs.Any(rs => rs.Predicate == "http://nettriple/match/player_1"));
             Assert.IsTrue(relationSpecs.Any(rs => rs.Predicate == "http://nettriple/match/player_2"));
+        }
+
+        [TestMethod]
+        public void Struct_ForEnumerable_BuildsExpectedStructureTransform()
+        {
+            // Arrange
+            var built = new TransformBuilder<Sr>("http://psi.hafslund.no/sesam/quant/meterreading-day")
+                .Subject(s => s.Id, "http://psi.hafslund.no/sesam/quant/meterreading-day/{0}")
+                .WithPropertyPredicateBase("http://psi.hafslund.no/sesam/quant/schema")
+                .Prop(s => s.Id, "/id")
+                .Prop(s => s.Mpt, "/mpt")
+                .Prop(s => s.Msno, "/msno")
+                .Prop(s => s.Rty, "/rty")
+                .Prop(s => s.Vty, "/vty")
+                .Prop(s => s.Un, "/un")
+                .Struct<Mv>(s => s.MeterValues, "/values",
+                    x => x.Val,
+                    x => x.Ts,
+                    x => x.Interval,
+                    x => x.Cm,
+                    x => x.Sts,
+                    x => x.Cst);
+
+            // Act
+            var transforms = built.StructureTransforms.ToList();
+
+            // Assert
+            Assert.AreEqual(1, transforms.Count);
+            var transform = transforms.First();
+            Assert.IsTrue(transform.IsEnumerable);
+            Assert.AreEqual(6, transform.Elements.Count());
+            Assert.AreEqual(0, transform.Elements.Single(e => e.Property.Name == "Val").Index);
+            Assert.AreEqual(2, transform.Elements.Single(e => e.Property.Name == "Interval").Index);
+            Assert.AreEqual(5, transform.Elements.Single(e => e.Property.Name == "Cst").Index);
+            
         }
     }
 }

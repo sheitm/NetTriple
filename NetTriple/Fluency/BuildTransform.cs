@@ -1,4 +1,4 @@
-﻿namespace NetTriple.Annotation.Fluency
+﻿namespace NetTriple.Fluency
 {
     public static class BuildTransform
     {

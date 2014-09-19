@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using NetTriple.Annotation.Internal;
 
 namespace NetTriple.Emit
 {
@@ -23,6 +26,16 @@ namespace NetTriple.Emit
             }
 
             return obj.ToString();
+        }
+
+        public static T ToDeserializedStructObject<T>(this string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return default(T);
+            }
+
+            return ReflectionHelper.Deserialize<T>(s);
         }
 
         public static Triple ToTriple(this string ts)
@@ -80,6 +93,17 @@ namespace NetTriple.Emit
             return washed.StartsWith("<")
                 ? washed.Substring(1, washed.Length - 1)
                 : washed;
+        }
+
+        public static IEnumerable<string[]> DeserializeStructListString(this string s)
+        {
+            return ReflectionHelper.WashStringObject(s).Split(new string[] {"##"}, StringSplitOptions.RemoveEmptyEntries)
+                .Select(se => se.DeserializeStructString());
+        }
+
+        public static string[] DeserializeStructString(this string s)
+        {
+            return s.Split(new string[] { ";;" }, StringSplitOptions.None);
         }
     }
 }

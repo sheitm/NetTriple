@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Annotation;
+using NetTriple.Annotation.Internal;
 using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Tests

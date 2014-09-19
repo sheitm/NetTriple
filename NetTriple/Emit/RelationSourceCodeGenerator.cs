@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NetTriple.Annotation;
-using NetTriple.Annotation.Fluency;
 using NetTriple.Annotation.Internal;
+using NetTriple.Fluency;
 
 namespace NetTriple.Emit
 {

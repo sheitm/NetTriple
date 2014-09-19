@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using NetTriple.Annotation;
 
-namespace NetTriple.Annotation.Fluency
+namespace NetTriple.Fluency
 {
     public interface IBuiltTransform
     {
@@ -12,6 +13,7 @@ namespace NetTriple.Annotation.Fluency
         IEnumerable<IPropertyPredicateSpecification> PropertySpecifications { get; }
         ISubjectSpecification SubjectSpecification { get; }
         IEnumerable<IChildrenPredicateSpecification> RelationSpecifications { get; }
+        IEnumerable<StructureTransform> StructureTransforms { get; }
 
         void SetLocator(ITransformLocator locator);
 

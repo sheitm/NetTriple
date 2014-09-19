@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using NetTriple.Annotation;
-using NetTriple.Annotation.Fluency;
+using NetTriple.Annotation.Internal;
+using NetTriple.Fluency;
 
 namespace NetTriple.Emit
 {
@@ -85,13 +86,12 @@ namespace NetTriple.Emit
             var subjectProperty = GetNameOfSubjectProperty(_type);
             sb.AppendLine("triple = triples.First();");
             var subjectPropertyType = GetTypeOfSubjectProperty(_type);
-            if (subjectPropertyType == typeof (int))
+            if (IdIsAssignable(_type))
             {
-                sb.AppendFormat("obj.{0} = int.Parse(triple.Subject.GetIdOfSubject());\r\n", subjectProperty.Key);
-            }
-            else
-            {
-                sb.AppendFormat("obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
+                sb.AppendFormat(
+                    subjectPropertyType == typeof (int)
+                        ? "obj.{0} = int.Parse(triple.Subject.GetIdOfSubject());\r\n"
+                        : "obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
             }
 
             foreach (var ppInfo in GetRdfProperties())
@@ -104,7 +104,47 @@ namespace NetTriple.Emit
                 sb.AppendLine("}");
             }
 
+            AppendStructInflation(sb);
+
             return sb.ToString();
+        }
+
+        private void AppendStructInflation(StringBuilder sb)
+        {
+            if (_transform == null)
+            {
+                return;
+            }
+
+            foreach (var structureTransform in _transform.StructureTransforms)
+            {
+                sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", structureTransform.Predicate);
+                sb.Append("if (triple != null)\r\n");
+                sb.AppendLine("{");
+                if (structureTransform.IsEnumerable)
+                {
+                    sb.AppendLine("    var mainArr = triple.Object.DeserializeStructListString();");
+                    sb.AppendFormat("    obj.{0} = mainArr.Select(arr => new {1}", structureTransform.Property.Name, ReflectionHelper.GetTypeOfProperty(structureTransform.Property).FullName);
+                    sb.Append("{ ");
+                    foreach (var element in structureTransform.Elements)
+                    {
+                        sb.AppendFormat("{0} = arr[{1}].ToDeserializedStructObject<{2}>(), ", element.Property.Name, element.Index, element.Property.PropertyType.FullName);
+                    }
+                    sb.AppendLine("}).ToArray();");
+                }
+                else
+                {
+                    sb.AppendFormat("    var sibling = new {0}();\r\n", structureTransform.Property.PropertyType.FullName);
+                    sb.AppendLine("    var arr = triple.Object.DeserializeStructString();");
+                    foreach (var element in structureTransform.Elements)
+                    {
+                        sb.AppendFormat("    sibling.{0} = arr[{1}].ToDeserializedStructObject<{2}>();\r\n", element.Property.Name, element.Index, element.Property.PropertyType.FullName);
+                    }
+
+                    sb.AppendFormat("    obj.{0} = sibling;\r\n", structureTransform.Property.Name);
+                }
+                sb.AppendLine("}");
+            }
         }
 
         private string GetConversionScript()
@@ -125,16 +165,100 @@ namespace NetTriple.Emit
 
             foreach (var ppInfo in GetRdfProperties())
             {
-                sb.Append("triples.Add(new Triple { ");
+                sb.Append("    triples.Add(new Triple { ");
                 sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = obj.{1}.ToTripleObject()", ppInfo.Predicate, ppInfo.Property.Name);
                 sb.AppendLine(" });");
             }
+
+            AppendStructTransforms(sb);
 
             var relationGenerator = _transform == null
                 ? new RelationSourceCodeGenerator(_type)
                 : new RelationSourceCodeGenerator(_transform);
 
             relationGenerator.AppendConversionScript(sb);
+
+            return sb.ToString();
+        }
+
+        private void AppendStructTransforms(StringBuilder sb)
+        {
+            if (_transform == null)
+            {
+                return;
+            }
+
+            foreach (var structureTransform in _transform.StructureTransforms)
+            {
+                sb.AppendFormat("if (obj.{0} != null)\r\n", structureTransform.Property.Name);
+                sb.AppendLine("{");
+                var lgth = structureTransform.Elements.Count();
+                sb.AppendFormat("    var frmt = \"{0}\";\r\n", MakeFormatString(lgth));
+
+                if (structureTransform.IsEnumerable)
+                {
+                    sb.AppendLine("    var builder = new StringBuilder();\r\n");
+                    sb.AppendFormat("    foreach (var child in obj.{0})\r\n", structureTransform.Property.Name);
+                    sb.AppendLine("    {");
+                    sb.AppendFormat("        builder.AppendFormat(frmt");
+                    var i = 0;
+                    foreach (var element in structureTransform.Elements.OrderBy(e => e.Index))
+                    {
+                        if (i < lgth)
+                        {
+                            sb.Append(", ");
+                        }
+
+                        sb.AppendFormat("child.{0}", element.Property.Name);
+                        i++;
+                    }
+
+                    sb.Append(");\r\n");
+                    sb.AppendLine("        builder.Append(\"##\");");
+                    sb.AppendLine("    }");
+                    sb.Append("    triples.Add(new Triple { ");
+                    sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = builder.ToString().ToTripleObject()", structureTransform.Predicate);
+                    sb.AppendLine(" });");
+                }
+                else
+                {
+                    sb.Append("    var v = string.Format(frmt");
+                    var i = 0;
+                    foreach (var element in structureTransform.Elements.OrderBy(e => e.Index))
+                    {
+                        if (i < lgth)
+                        {
+                            sb.Append(", ");
+                        }
+
+                        sb.AppendFormat("obj.{0}.{1}", structureTransform.Property.Name, element.Property.Name);
+                        i++;
+                    }
+
+                    sb.Append(");\r\n");
+                    sb.Append("    triples.Add(new Triple { ");
+                    sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = v.ToTripleObject()", structureTransform.Predicate);
+                    sb.AppendLine(" });");
+                }
+
+                
+                sb.AppendLine("}");
+            }
+        }
+
+        private string MakeFormatString(int lgth)
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < lgth; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(";;");
+                }
+                sb.Append("{");
+                sb.Append(i);
+                sb.Append("}");
+            }
 
             return sb.ToString();
         }
@@ -170,6 +294,25 @@ namespace NetTriple.Emit
 
 
             return new KeyValuePair<string, string>(property.Name, template);
+        }
+
+        private bool IdIsAssignable(Type type)
+        {
+            if (_transform != null)
+            {
+                return ReflectionHelper.IsAssignable(_transform.SubjectSpecification.Property);
+            }
+
+            var property = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .SingleOrDefault(p => Attribute.GetCustomAttribute(p, typeof(RdfSubjectAttribute)) != null);
+
+            if (property == null)
+            {
+                var classAttrib = (RdfSubjectOnClassAttribute)Attribute.GetCustomAttribute(type, typeof(RdfSubjectOnClassAttribute));
+                property = type.GetProperty(classAttrib.Property, BindingFlags.Instance | BindingFlags.Public);
+            }
+
+            return ReflectionHelper.IsAssignable(property);
         }
 
         private Type GetTypeOfSubjectProperty(Type type)

@@ -120,6 +120,7 @@
   <data name="AssemblyTemplate" xml:space="preserve">
     <value>using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NetTriple.Emit;
 
 namespace NetTriple.Conversion

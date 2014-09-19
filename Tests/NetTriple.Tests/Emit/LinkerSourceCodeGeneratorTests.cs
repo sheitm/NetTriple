@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Annotation;
-using NetTriple.Annotation.Fluency;
 using NetTriple.Emit;
+using NetTriple.Fluency;
 using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Tests.Emit

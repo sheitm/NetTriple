@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -86,6 +87,27 @@ namespace NetTriple.Annotation.Internal
         }
 
         /// <summary>
+        /// Whether the given property is for an enumerable type
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static bool IsEnumerable(PropertyInfo property)
+        {
+            var type = property.PropertyType;
+            return typeof (string) != type && typeof (IEnumerable).IsAssignableFrom(type);
+        }
+
+        /// <summary>
+        /// Whether the property has a setter that is publically accessible
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static bool IsAssignable(PropertyInfo property)
+        {
+            return property.GetSetMethod() != null;
+        }
+
+        /// <summary>
         /// Deserializes the given string to the type of T.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -106,7 +128,7 @@ namespace NetTriple.Annotation.Internal
             return (T) Deserialisers[typeof (T)].Invoke(s);
         }
 
-        private static object WashStringObject(string v)
+        public static string WashStringObject(string v)
         {
             if (string.IsNullOrWhiteSpace(v))
             {

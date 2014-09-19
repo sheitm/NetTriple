@@ -104,5 +104,96 @@ namespace NetTriple.Annotation.Tests.Internal
             // Assert
             Assert.AreEqual((decimal)123455.667, d);
         }
+
+        [TestMethod]
+        public void IsEnumerable_ForArray_ReturnsTrue()
+        {
+            // Act
+            var property = typeof (Tournament).GetProperty("Players", BindingFlags.Public | BindingFlags.Instance);
+
+            // Act
+            var isEnumerable = ReflectionHelper.IsEnumerable(property);
+
+            // Assert
+            Assert.IsTrue(isEnumerable);
+        }
+
+        [TestMethod]
+        public void IsEnumerable_ForGenericIEnumerable_ReturnsTrue()
+        {
+            // Act
+            var property = typeof(Tournament).GetProperty("Matches", BindingFlags.Public | BindingFlags.Instance);
+
+            // Act
+            var isEnumerable = ReflectionHelper.IsEnumerable(property);
+
+            // Assert
+            Assert.IsTrue(isEnumerable);
+        }
+
+        [TestMethod]
+        public void IsEnumerable_ForString_ReturnsFalse()
+        {
+            // Act
+            var property = typeof(Tournament).GetProperty("Name", BindingFlags.Public | BindingFlags.Instance);
+
+            // Act
+            var isEnumerable = ReflectionHelper.IsEnumerable(property);
+
+            // Assert
+            Assert.IsFalse(isEnumerable);
+        }
+
+        [TestMethod]
+        public void IsEnumerable_ForInt_ReturnsFalse()
+        {
+            // Act
+            var property = typeof(Tournament).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
+
+            // Act
+            var isEnumerable = ReflectionHelper.IsEnumerable(property);
+
+            // Assert
+            Assert.IsFalse(isEnumerable);
+        }
+
+        [TestMethod]
+        public void IsAssignable_ForPropertyWithoutSetter_ReturnsFalse()
+        {
+            // Arrange
+            var property = typeof (Sr).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
+
+            // Act
+            var isAssignable = ReflectionHelper.IsAssignable(property);
+
+            // Assert
+            Assert.IsFalse(isAssignable);
+        }
+
+        [TestMethod]
+        public void IsAssignable_ForPropertyWithPrivateSetter_ReturnsFalse()
+        {
+            // Arrange
+            var property = typeof(Chapter).GetProperty("PrivateSetter", BindingFlags.Public | BindingFlags.Instance);
+
+            // Act
+            var isAssignable = ReflectionHelper.IsAssignable(property);
+
+            // Assert
+            Assert.IsFalse(isAssignable);
+        }
+
+        [TestMethod]
+        public void IsAssignable_ForPublicPropertyWithSetter_ReturnsTrue()
+        {
+            // Arrange
+            var property = typeof(Chapter).GetProperty("ChapterNumber", BindingFlags.Public | BindingFlags.Instance);
+
+            // Act
+            var isAssignable = ReflectionHelper.IsAssignable(property);
+
+            // Assert
+            Assert.IsTrue(isAssignable);
+        }
     }
 }

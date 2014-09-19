@@ -23,5 +23,45 @@ namespace NetTriple.Tests.Emit
             // Assert
             Assert.AreEqual("http://netriple.com/unittesting/book_review", washed);
         }
+
+        [TestMethod]
+        public void DeserializeStructString_ValidInput_DeserializesAsExpected()
+        {
+            // Arrange
+            var s = "13,348;;14.06.2014 00:00:00;;60;;GE;;OK;;OKKK";
+
+            // Act
+            var arr = s.DeserializeStructString();
+
+            // Assert
+            Assert.AreEqual(6, arr.Length);
+            Assert.AreEqual("13,348", arr[0]);
+            Assert.AreEqual("14.06.2014 00:00:00", arr[1]);
+            Assert.AreEqual("OKKK", arr[5]);
+        }
+
+        [TestMethod]
+        public void DeserializeStructString_InputWithBlanks_DeserializesAsExpected()
+        {
+            // Arrange
+            var s = "13,348;;;;60;;GE;;;;OKKK";
+
+            // Act
+            var arr = s.DeserializeStructString();
+
+            // Assert
+            Assert.AreEqual(6, arr.Length);
+            Assert.AreEqual(string.Empty, arr[1]);
+        }
+
+        [TestMethod]
+        public void DeserializeStructListString_ForList_DeserializesAsExpected()
+        {
+            // Arrange
+            var s = "13,348;;14.06.2014 00:00:00;;60;;GE;;OK;;OK##10,358;;14.06.2014 01:00:00;;60;;GE;;OK;;OK##13,348;;;;60;;GE;;;;OKKK##";
+
+            // Act
+            var arr = s.DeserializeStructListString().ToList();
+        }
     }
 }

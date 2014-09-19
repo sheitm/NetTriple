@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using NetTriple.Annotation;
 using NetTriple.Annotation.Internal;
 
-namespace NetTriple.Annotation.Fluency
+namespace NetTriple.Fluency
 {
     public class TransformBuilder<T> : IBuiltTransform
     {
         private string _propertyPredicateBase;
         private readonly List<IPropertyPredicateSpecification> _properties = new List<IPropertyPredicateSpecification>();
         private readonly List<IChildrenPredicateSpecification> _relations = new List<IChildrenPredicateSpecification>();
+        private readonly List<StructureTransform> _structureTransforms = new List<StructureTransform>(); 
         private ITransformLocator _locator;
 
         public TransformBuilder(string typeString, string typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
@@ -35,6 +38,17 @@ namespace NetTriple.Annotation.Fluency
                 }
             }
         }
+
+        public IEnumerable<StructureTransform> StructureTransforms
+        {
+            get
+            {
+                foreach (var structureTransform in _structureTransforms)
+                {
+                    yield return structureTransform;
+                }
+            }
+        } 
 
         public ISubjectSpecification SubjectSpecification { get; private set; }
 
@@ -121,5 +135,25 @@ namespace NetTriple.Annotation.Fluency
 
             return this;
         }
+
+        public TransformBuilder<T> Struct<TRelationType>(Expression<Func<T, object>> accessor, string predicate, params Expression<Func<TRelationType, object>>[] elements)
+        {
+            var pred = string.IsNullOrEmpty(_propertyPredicateBase) ? predicate : string.Format("{0}{1}", _propertyPredicateBase, predicate);
+            var transform = new StructureTransform((PropertyInfo)ReflectionHelper.FindProperty(accessor), pred)
+            {
+                Elements =
+                    elements.Select(
+                        (t, i) =>
+                            new StructureTransformElement
+                            {
+                                Index = i,
+                                Property = (PropertyInfo) ReflectionHelper.FindProperty(t)
+                            }).ToList()
+            };
+
+            _structureTransforms.Add(transform);
+
+            return this;
+        } 
     }
 }

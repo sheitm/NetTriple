@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetTriple.Annotation.Fluency;
 using NetTriple.Emit;
+using NetTriple.Fluency;
 using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Tests.Emit

@@ -13,5 +13,7 @@ namespace NetTriple.Tests.TestDomain
 
         [RdfProperty(Predicate = "http://netriple.com/unittesting/chapter/title")]
         public string Title { get; set; }
+
+        public string PrivateSetter { get; private set; }
     }
 }
