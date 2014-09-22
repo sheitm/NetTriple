@@ -65,6 +65,11 @@ namespace NetTriple
                     string objString = "";
                     for (int i = 2; i < arr.Length; i++)
                     {
+                        if (i > 2)
+                        {
+                            objString += " ";
+                        }
+
                         objString += arr[i];
                     }
 
@@ -72,7 +77,7 @@ namespace NetTriple
                     {
                         Subject = arr[0],
                         Predicate = arr[1],
-                        Object = objString
+                        Object = objString.TrimEnd()
                     };
                 });
         }

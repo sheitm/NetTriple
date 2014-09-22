@@ -115,17 +115,24 @@ namespace NetTriple.Annotation.Internal
         /// <returns></returns>
         public static T Deserialize<T>(string s)
         {
-            if (typeof(T).IsEnum)
+            try
             {
-                return (T)Enum.Parse(typeof(T), s);
-            }
+                if (typeof(T).IsEnum)
+                {
+                    return (T)Enum.Parse(typeof(T), s);
+                }
 
-            if (!Deserialisers.ContainsKey(typeof (T)))
+                if (!Deserialisers.ContainsKey(typeof (T)))
+                {
+                    throw new InvalidOperationException(string.Format("Deserialization of type {0} is not supported.", typeof(T).FullName));
+                }
+
+                return (T) Deserialisers[typeof (T)].Invoke(s);
+            }
+            catch (Exception e)
             {
-                throw new InvalidOperationException(string.Format("Deserialization of type {0} is not supported.", typeof(T).FullName));
+                throw new FormatException(string.Format("Unable to deserialize string {0} to type {1}", s, typeof(T).FullName), e);
             }
-
-            return (T) Deserialisers[typeof (T)].Invoke(s);
         }
 
         public static string WashStringObject(string v)

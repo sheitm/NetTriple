@@ -19,7 +19,7 @@ namespace NetTriple.Tests
             var nTriples = triples.ToNTriples();
 
             // Assert
-            Assert.IsTrue(nTriples.Contains("<http://netriple.com/unittesting/hourmeasurement/1112> <http://netriple.com/unittesting/hourmeasurement/level> 2 .\r\n"));
+            Assert.IsTrue(nTriples.Contains("<http://netriple.com/unittesting/hourmeasurement/1111> <http://netriple.com/unittesting/hourmeasurement/level> 1 .\r\n"));
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace NetTriple.Tests
             var bytes = triples.ToBytes();
 
             // Assert
-            Assert.AreEqual(3056, bytes.Length);
+            Assert.AreEqual(3090, bytes.Length);
         }
 
         [TestMethod]
@@ -67,6 +67,28 @@ namespace NetTriple.Tests
                 t.Subject == "<http://netriple.com/unittesting/measurement/111>"
                 && t.Predicate == "<http://netriple.com/unittesting/measurement/value>"
                 && t.Object == "123"));
+        }
+
+        [TestMethod]
+        public void ToNTriples_backAndForth_TriplesAsIdentical()
+        {
+            // Arrange
+            var triples = GetTriples().ToList();
+
+            // Act
+            var triples2 = triples.ToNTriples().ToTriplesFromNTriples().ToList();
+
+            // Assert
+            Assert.AreEqual(triples.Count(), triples2.Count);
+            foreach (var triple in triples)
+            {
+                var triple2 = triples2.SingleOrDefault(t => 
+                    t.Subject == triple.Subject && 
+                    t.Predicate == triple.Predicate &&
+                    t.Object == triple.Object);
+                var msg = string.Format("{0}", triple);
+                Assert.IsNotNull(triple2, msg);
+            }
         }
 
         private IEnumerable<Triple> GetTriples()
@@ -87,7 +109,7 @@ namespace NetTriple.Tests
                 new Triple{Subject = hmSubject1, Predicate = "<http://netriple.com/unittesting/hourmeasurement/level>", Object = "1"},
 
                 new Triple{Subject = hmSubject2, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/HourMeasurement>"},
-                new Triple{Subject = hmSubject2, Predicate = "<http://netriple.com/unittesting/hourmeasurement/level>", Object = "2"},
+                new Triple{Subject = hmSubject2, Predicate = "<http://netriple.com/unittesting/hourmeasurement/date>", Object = "14.06.2014 00:00:00"},
 
                 new Triple{Subject = meterSubject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://netriple.com/unittesting/Meter>"},
                 new Triple{Subject = meterSubject, Predicate = "<http://netriple.com/unittesting/meter_measurements>", Object = "<http://netriple.com/unittesting/measurement/111>"}
