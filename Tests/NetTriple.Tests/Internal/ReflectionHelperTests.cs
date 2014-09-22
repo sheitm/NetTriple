@@ -161,7 +161,7 @@ namespace NetTriple.Annotation.Tests.Internal
         public void IsAssignable_ForPropertyWithoutSetter_ReturnsFalse()
         {
             // Arrange
-            var property = typeof (Sr).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
+            var property = typeof(Sr).GetProperty("Subject", BindingFlags.Public | BindingFlags.Instance);
 
             // Act
             var isAssignable = ReflectionHelper.IsAssignable(property);

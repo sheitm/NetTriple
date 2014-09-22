@@ -46,6 +46,7 @@
     <Compile Include="Emit\LinkerSourceCodeGeneratorTests.cs" />
     <Compile Include="Emit\RelationSourceCodeGeneratorTests.cs" />
     <Compile Include="Emit\SourceCodeGeneratorTests.cs" />
+    <Compile Include="ExtensionsTests.cs" />
     <Compile Include="Fluency\AllRdfTransformsTests.cs" />
     <Compile Include="Fluency\TransformBuilderTests.cs" />
     <Compile Include="Internal\ReflectionHelperTests.cs" />
@@ -72,6 +73,11 @@
     <Compile Include="TestDomain\Player.cs" />
     <Compile Include="TestDomain\Tournament.cs" />
     <Compile Include="TestDomain\Wife.cs" />
+    <Compile Include="TestResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TestResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="TripleTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +88,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

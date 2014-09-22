@@ -20,7 +20,7 @@ namespace NetTriple.Tests.Emit
 
             // Assert
             Assert.IsTrue(source.Contains("var template = \"<http://netriple.com/unittesting/orderdetail/{0}>\";"));
-            Assert.AreEqual(3615, source.Length);
+            Assert.AreEqual(3631, source.Length);
         }
 
         [TestMethod]

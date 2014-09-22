@@ -74,6 +74,7 @@
       <DependentUpon>TemplateResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Emit\TransformLocator.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Fluency\AllRdfTransforms.cs" />
     <Compile Include="Fluency\BuildTransform.cs" />
     <Compile Include="Fluency\IBuiltTransform.cs" />

@@ -381,7 +381,7 @@ namespace NetTriple.Tests
             var series = triples.ToObject<Sr>();
 
             // Assert
-            Assert.AreEqual(2, series.MeterValues.Count());
+            Assert.AreEqual(3, series.MeterValues.Count());
         }
     }
 }
