@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using NodaTime;
 
 namespace NetTriple.Annotation.Internal
 {
@@ -19,7 +21,7 @@ namespace NetTriple.Annotation.Internal
             {typeof(double), v => double.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
             {typeof(long), v => long.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
             {typeof(decimal), v => decimal.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
-
+            {typeof(Instant), DeserializeInstant},
             {typeof(DateTime), DeserializeDateTime}
         };
 
@@ -165,6 +167,20 @@ namespace NetTriple.Annotation.Internal
             }
 
             return o;
+        }
+
+        private static object DeserializeInstant(string arg)
+        {
+            const string pattern = @"2[0-9]{3}-[0-1][0-9]-[0-3][0-9]T[0-9]{2}:[0-9]{2}:[0-9]{2}Z";
+
+            var regex = new Regex(pattern);
+            var match = regex.Match(arg);
+            if (!match.Success)
+            {
+                throw new FormatException(string.Format("A valid UTC datetime is not contained in {0}", pattern));
+            }
+
+            return Instant.FromDateTimeUtc(DateTime.Parse(match.Value).ToUniversalTime());
         }
     }
 }

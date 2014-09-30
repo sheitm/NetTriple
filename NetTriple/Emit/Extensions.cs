@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NetTriple.Annotation.Internal;
+using NodaTime;
 
 namespace NetTriple.Emit
 {
@@ -22,7 +23,13 @@ namespace NetTriple.Emit
 
             if (obj is DateTime)
             {
-                return "\"" + ((DateTime)obj).ToString("u").Replace(" ", "T") + "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>";
+                var dt = (DateTime) obj;
+                return "\"" + dt.ToUniversalTime().ToString("u").Replace(" ", "T") + "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>";
+            }
+
+            if (obj is Instant)
+            {
+                return string.Format("\"{0}\"^^<http://www.w3.org/2001/XMLSchema#dateTime>", obj);
             }
 
             return obj.ToString();

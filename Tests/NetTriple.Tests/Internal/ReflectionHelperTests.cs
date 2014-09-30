@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Annotation.Internal;
 using NetTriple.Tests.TestDomain;
+using NodaTime;
 
 namespace NetTriple.Annotation.Tests.Internal
 {
@@ -103,6 +104,20 @@ namespace NetTriple.Annotation.Tests.Internal
 
             // Assert
             Assert.AreEqual((decimal)123455.667, d);
+        }
+
+        [TestMethod]
+        public void Deserialize_ForInstant_GetsExpectedInstant()
+        {
+            // Arange
+            var dt = "\"2014-09-29T15:16:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>";
+
+            // Act
+            var instant = ReflectionHelper.Deserialize<Instant>(dt);
+
+            // Assert
+            var zonedTime =instant.InZone(DateTimeZoneProviders.Tzdb.GetZoneOrNull("Europe/Oslo"));
+            Assert.AreEqual("2014-09-29T17:16:00 Europe/Oslo (+02)", zonedTime.ToString());
         }
 
         [TestMethod]

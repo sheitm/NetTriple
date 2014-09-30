@@ -71,5 +71,16 @@ namespace NetTriple.Tests {
                 return ResourceManager.GetString("NTriples", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://psi.hafslund.no/sesam/quant/meterreading-day&gt; .
+        ///&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/day&gt; &quot;2014-06-14&quot; .
+        ///&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/mnoid&gt; &quot;61 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string NTriples2 {
+            get {
+                return ResourceManager.GetString("NTriples2", resourceCulture);
+            }
+        }
     }
 }

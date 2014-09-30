@@ -130,4 +130,15 @@
 &lt;http://netriple.com/unittesting/meter/99&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://netriple.com/unittesting/Meter&gt; .
 &lt;http://netriple.com/unittesting/meter/99&gt; &lt;http://netriple.com/unittesting/meter_measurements&gt; &lt;http://netriple.com/unittesting/measurement/111&gt; .</value>
   </data>
+  <data name="NTriples2" xml:space="preserve">
+    <value>&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://psi.hafslund.no/sesam/quant/meterreading-day&gt; .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/day&gt; "2014-06-14" .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/mnoid&gt; "610000636" .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/mpt&gt; "707057500032064897" .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/msno&gt; "510000636" .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/rty&gt; "REL" .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/vty&gt; "ECR" .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/un&gt; "kWh" .
+&lt;http://psi.hafslund.no/sesam/quant/meterreading-day/707057500032064897_REL_ECR_kWh_2014-06-14&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/values&gt; "13,348;;14.06.2014 00:00:00;;60;;GE;;OK;;OK##10,358;;14.06.2014 01:00:00;;60;;GE;;OK;;OK##13,48;;14.06.2014 02:00:00;;60;;GE;;OK;;OK##18,529;;14.06.2014 03:00:00;;60;;GE;;OK;;OK##15,746;;14.06.2014 04:00:00;;60;;GE;;OK;;OK##16,052;;14.06.2014 05:00:00;;60;;GE;;OK;;OK##13,692;;14.06.2014 06:00:00;;60;;GE;;OK;;OK##15,73;;14.06.2014 07:00:00;;60;;GE;;OK;;OK##12,755;;14.06.2014 08:00:00;;60;;GE;;OK;;OK##17,129;;14.06.2014 09:00:00;;60;;GE;;OK;;OK##10,169;;14.06.2014 10:00:00;;60;;GE;;OK;;OK##12,901;;14.06.2014 11:00:00;;60;;GE;;OK;;OK##11,39;;14.06.2014 12:00:00;;60;;GE;;OK;;OK##17,081;;14.06.2014 13:00:00;;60;;GE;;OK;;OK##15,225;;14.06.2014 14:00:00;;60;;GE;;OK;;OK##10,142;;14.06.2014 15:00:00;;60;;GE;;OK;;OK##14,98;;14.06.2014 16:00:00;;60;;GE;;OK;;OK##15,54;;14.06.2014 17:00:00;;60;;GE;;OK;;OK##12,871;;14.06.2014 18:00:00;;60;;GE;;OK;;OK##12,556;;14.06.2014 19:00:00;;60;;GE;;OK;;OK##9,962;;14.06.2014 20:00:00;;60;;GE;;OK;;OK##15,162;;14.06.2014 21:00:00;;60;;GE;;OK;;OK##8,914;;14.06.2014 22:00:00;;60;;GE;;OK;;OK##11,705;;14.06.2014 23:00:00;;60;;GE;;OK;;OK##" .</value>
+  </data>
 </root>

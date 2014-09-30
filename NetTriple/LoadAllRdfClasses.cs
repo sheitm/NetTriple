@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using NetTriple.Annotation;
 using NetTriple.Emit;
 using NetTriple.Fluency;
+using NodaTime;
 
 namespace NetTriple
 {
@@ -251,7 +252,8 @@ namespace NetTriple
                 .AddReferences(
                     new MetadataFileReference(typeof(object).Assembly.Location),
                     new MetadataFileReference(typeof(ParallelQuery).Assembly.Location),
-                    new MetadataFileReference(typeof(LoadAllRdfClasses).Assembly.Location))
+                    new MetadataFileReference(typeof(LoadAllRdfClasses).Assembly.Location),
+                    new MetadataFileReference(typeof(Instant).Assembly.Location))
                 .AddReferences(GetAssembliesOfTypes(types).Select(a => new MetadataFileReference(a.Location)))
                 .AddSyntaxTrees(tree);
 

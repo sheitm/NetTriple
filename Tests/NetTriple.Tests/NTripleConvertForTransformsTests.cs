@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetTriple.Emit;
 using NetTriple.Fluency;
 using NetTriple.Tests.TestDomain;
+using NodaTime;
 
 namespace NetTriple.Tests
 {
@@ -195,7 +196,7 @@ namespace NetTriple.Tests
             Assert.IsTrue(triples.Any(t => t.Predicate == "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>" && t.Object == "<http://nettriple/Player>"));
             Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/id>" && t.Object == "\"997766\""));
             Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/gender>" && t.Object == "Male"));
-            Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/dateOfBirth>" && t.Object == "\"1955-12-04T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
+            Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/dateOfBirth>" && t.Object == "\"1955-12-03T23:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
 
             foreach (var triple in triples)
             {
@@ -306,7 +307,7 @@ namespace NetTriple.Tests
                .WithPropertyPredicateBase("http://psi.hafslund.no/sesam/quant/schema")
                .Prop(s => s.Id, "/id")
                .Prop(s => s.Mpt, "/mpt")
-               .Prop(s => s.Msno, "/msno")
+               .Prop(s => s.Msno, "/msno")  
                .Prop(s => s.Rty, "/rty")
                .Prop(s => s.Vty, "/vty")
                .Prop(s => s.Un, "/un")
@@ -382,6 +383,131 @@ namespace NetTriple.Tests
 
             // Assert
             Assert.AreEqual(3, series.MeterValues.Count());
+        }
+
+        [TestMethod]
+        public void ToTriples_WithNodaTimeInstant_GeneratesExpectedTriples()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<PointInTime>("http://nettriples/point_in_time")
+                    .Subject(s => s.Id, "http://nettriples/point_in_time/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/point_in_time/schema")
+                    .Prop(s => s.Id, "/id")
+                    .Prop(s => s.Instant, "/instant"));
+            var pointInTime = new PointInTime
+            {
+                Id = "1",
+                Instant = Instant.FromDateTimeUtc(DateTime.Parse("2014-09-29T15:16:00Z").ToUniversalTime()) 
+            };
+
+            // Act
+            var triples = pointInTime.ToTriples().ToList();
+
+            // Assert
+            Assert.AreEqual(3, triples.Count());
+            Assert.IsTrue(triples.Any(t =>
+                t.Subject == "<http://nettriples/point_in_time/1>"
+                && t.Predicate == "<http://nettriples/point_in_time/schema/instant>"
+                && t.Object == "\"2014-09-29T15:16:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
+        }
+
+        [TestMethod]
+        public void ToTriples_WithNodaInstantInStruct_ReturnsExpectedTriples()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<TimeSeries>("http://nettriples/time-series")
+                   .Subject(ts => ts.Id, "http://nettriples/time-series/{0}")
+                   .WithPropertyPredicateBase("http://nettriples/time-series/schema")
+                   .Prop(ts => ts.Id, "/id")
+                   .Prop(ts => ts.Name, "/name")
+                   .Struct<PointInTime>(ts => ts.Points, "/points",
+                        p => p.Id,
+                        p => p.Instant)
+                );
+
+            var timeSeries = new TimeSeries
+            {
+                Id = "YY-12",
+                Name = "Gpx track",
+                Points = new List<PointInTime>
+                {
+                    new PointInTime{ Id = "1", Instant = Instant.FromDateTimeUtc(DateTime.Parse("2014-09-29T15:16:00Z").ToUniversalTime()) },
+                    new PointInTime{ Id = "2", Instant = Instant.FromDateTimeUtc(DateTime.Parse("2014-09-29T16:16:00Z").ToUniversalTime()) }
+                }
+            };
+
+            // Act
+            var triples = timeSeries.ToTriples();
+
+            // Assert
+            Assert.AreEqual(4, triples.Count());
+            var st = triples.Single(t => t.Predicate == "<http://nettriples/time-series/schema/points>");
+            Assert.AreEqual("\"1;;2014-09-29T15:16:00Z##2;;2014-09-29T16:16:00Z##\"", st.Object);
+            //Assert.IsTrue(triples.Any(t => t.Object == "1;;2014-09-29T15:16:00Z##2;;2014-09-29T16:16:00Z##"));
+        }
+
+        [TestMethod]
+        public void ToObject_WithNodaInstantInStruct_ReturnsExpectedObject()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<TimeSeries>("http://nettriples/time-series")
+                   .Subject(ts => ts.Id, "http://nettriples/time-series/{0}")
+                   .WithPropertyPredicateBase("http://nettriples/time-series/schema")
+                   .Prop(ts => ts.Id, "/id")
+                   .Prop(ts => ts.Name, "/name")
+                   .Struct<PointInTime>(ts => ts.Points, "/points",
+                        p => p.Id,
+                        p => p.Instant)
+                );
+
+            var subject = "<http://nettriples/time-series/YY-12>";
+            var triples = new List<Triple>
+            {
+                new Triple { Subject = subject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriples/time-series>" },
+                new Triple { Subject = subject, Predicate = "<http://nettriples/time-series/schema/id>", Object = "\"YY-12\"" },
+                new Triple { Subject = subject, Predicate = "<http://nettriples/time-series/schema/name>", Object = "\"Gpx track\""},
+                new Triple { Subject = subject, Predicate = "<http://nettriples/time-series/schema/points>", Object = "\"1;;2014-09-29T15:16:00Z##2;;2014-09-29T16:16:00Z##\""}
+            };
+
+            // Act
+            var series = triples.ToObject<TimeSeries>();
+
+            // Assert
+            Assert.AreEqual("YY-12", series.Id);
+            Assert.AreEqual("Gpx track", series.Name);
+            Assert.AreEqual(2, series.Points.Count());
+            Assert.IsTrue(series.Points.Any(p => p.Id == "1" && p.Instant.ToString() == "2014-09-29T15:16:00Z"));
+            Assert.IsTrue(series.Points.Any(p => p.Id == "2" && p.Instant.ToString() == "2014-09-29T16:16:00Z"));
+        }
+
+        [TestMethod]
+        public void ToObject_WithNodaInstant_ReturnsExpectedInstance()
+        {
+            // Arrange
+             LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<PointInTime>("http://nettriples/point_in_time")
+                    .Subject(s => s.Id, "http://nettriples/point_in_time/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/point_in_time/schema")
+                    .Prop(s => s.Id, "/id")
+                    .Prop(s => s.Instant, "/instant"));
+
+            var subject = "<http://nettriples/point_in_time/1>";
+            var triples = new List<Triple>
+            {
+                new Triple { Subject = subject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriples/point_in_time>" },
+                new Triple { Subject = subject, Predicate = "<http://nettriples/point_in_time/schema/id>", Object = "\"1\"" },
+                new Triple { Subject = subject, Predicate = "<http://nettriples/point_in_time/schema/instant>", Object = "\"2014-09-29T15:16:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>" }
+            };
+
+            // Act
+            var pointInTime = triples.ToObject<PointInTime>();
+
+            // Assert
+            Assert.AreEqual("1", pointInTime.Id);
+            Assert.AreEqual("2014-09-29T15:16:00Z", pointInTime.Instant.ToString());
         }
     }
 }
