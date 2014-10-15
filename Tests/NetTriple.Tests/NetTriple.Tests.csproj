@@ -53,6 +53,7 @@
     <Compile Include="Fluency\AllRdfTransformsTests.cs" />
     <Compile Include="Fluency\TransformBuilderTests.cs" />
     <Compile Include="Internal\ReflectionHelperTests.cs" />
+    <Compile Include="Internal\StringHelperTests.cs" />
     <Compile Include="LoadAllRdfClassesTests.cs" />
     <Compile Include="NTripleConvertForTransformsTests.cs" />
     <Compile Include="NTripleConvertTests.cs" />

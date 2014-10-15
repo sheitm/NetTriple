@@ -263,6 +263,15 @@ namespace NetTriple
                 var compileResult = compilation.Emit(stream);
                 if (!compileResult.Success)
                 {
+                    var sb = new StringBuilder();
+                    sb.AppendFormat("The assembly could not be built, there are {0} diagnostic messages.\r\n", compileResult.Diagnostics.Count());
+                    var msg = compileResult.Diagnostics.Aggregate(
+                        sb,
+                        (builder, each) =>
+                        {
+                            builder.AppendFormat("{0}\r\n", each.GetMessage());
+                            return builder;
+                        });
                     throw new InvalidOperationException(string.Format("The assembly could not be built, there are {0} diagnostic messages.", compileResult.Diagnostics.Count()));
                 }
 

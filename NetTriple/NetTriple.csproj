@@ -87,6 +87,7 @@
     <Compile Include="Fluency\TransformBuilder.cs" />
     <Compile Include="IChildrenPredicateSpecification.cs" />
     <Compile Include="Internal\ReflectionHelper.cs" />
+    <Compile Include="Internal\StringHelper.cs" />
     <Compile Include="IPropertyPredicateSpecification.cs" />
     <Compile Include="ISubjectSpecification.cs" />
     <Compile Include="LoadAllRdfClasses.cs" />

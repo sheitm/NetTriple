@@ -63,5 +63,18 @@ namespace NetTriple.Tests.Emit
             // Act
             var arr = s.DeserializeStructListString().ToList();
         }
+
+        [TestMethod]
+        public void ToTripleObject_StringWithoutSpecialChars_IsWrappedInQuotes()
+        {
+            // Arrange
+            var s = "This is a regular string";
+
+            // Act
+            var r = s.ToTripleObject();
+
+            // Assert
+            Assert.AreEqual(string.Format("\"{0}\"", s), r);
+        }
     }
 }

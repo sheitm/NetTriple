@@ -509,5 +509,67 @@ namespace NetTriple.Tests
             Assert.AreEqual("1", pointInTime.Id);
             Assert.AreEqual("2014-09-29T15:16:00Z", pointInTime.Instant.ToString());
         }
+
+        [TestMethod]
+        public void ToObject_SpecialCharsInString_CharactersAsExpected()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Player>("http://nettriple/Player")
+                    .Subject(p => p.Id, "http://nettriple/player/{0}")
+                    .WithPropertyPredicateBase("http://nettriple/player")
+                    .Prop(p => p.Id, "/id")
+                    .Prop(p => p.Name, "/name")
+                    .Prop(p => p.Gender, "/gender")
+                    .Prop(p => p.DateOfBirth, "/dateOfBirth"));
+
+            const string playerSubject = "<http://nettriple/player/909>";
+            const string typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = playerSubject, Predicate = typePredicate, Object = "<http://nettriple/Player>"},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/id>", Object = "\"909\""},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/name>", Object = "\"Bj\u00F8rn Borg\""},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/gender>", Object = "Male"},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/dateOfBirth>", Object = "\"1956-06-06T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"},
+            };
+
+            // Act
+            var player = triples.ToObject<Player>();
+
+            // Assert
+            Assert.AreEqual("Bjørn Borg", player.Name);
+        }
+
+        [TestMethod]
+        public void ToObject_RdfTypeInfo_RdfTypeInfoRemoved()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Player>("http://nettriple/Player")
+                    .Subject(p => p.Id, "http://nettriple/player/{0}")
+                    .WithPropertyPredicateBase("http://nettriple/player")
+                    .Prop(p => p.Id, "/id")
+                    .Prop(p => p.Name, "/name")
+                    .Prop(p => p.Gender, "/gender")
+                    .Prop(p => p.DateOfBirth, "/dateOfBirth"));
+
+            const string playerSubject = "<http://nettriple/player/909>";
+            const string typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = playerSubject, Predicate = typePredicate, Object = "<http://nettriple/Player>"},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/id>", Object = "\"909\"^^<http://example.org/datatype1>"},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/name>", Object = "\"Bj\u00F8rn Borg\""},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/gender>", Object = "Male"},
+                new Triple{Subject = playerSubject, Predicate = "<http://nettriple/player/dateOfBirth>", Object = "\"1956-06-06T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"},
+            };
+
+            // Act
+            var player = triples.ToObject<Player>();
+
+            // Assert
+            Assert.AreEqual("909", player.Id);
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using NetTriple.Internal;
 using NodaTime;
 
 namespace NetTriple.Annotation.Internal
@@ -113,12 +114,14 @@ namespace NetTriple.Annotation.Internal
         /// Deserializes the given string to the type of T.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="s"></param>
+        /// <param name="input"></param>
         /// <returns></returns>
-        public static T Deserialize<T>(string s)
+        public static T Deserialize<T>(string input)
         {
             try
             {
+                var s = RemoveTypeInfo(input);
+
                 if (typeof(T).IsEnum)
                 {
                     return (T)Enum.Parse(typeof(T), s);
@@ -133,8 +136,13 @@ namespace NetTriple.Annotation.Internal
             }
             catch (Exception e)
             {
-                throw new FormatException(string.Format("Unable to deserialize string {0} to type {1}", s, typeof(T).FullName), e);
+                throw new FormatException(string.Format("Unable to deserialize string {0} to type {1}", input, typeof(T).FullName), e);
             }
+        }
+
+        private static string RemoveTypeInfo(string input)
+        {
+            return input.RemoveRdfTypeInfo();
         }
 
         public static string WashStringObject(string v)
@@ -144,13 +152,7 @@ namespace NetTriple.Annotation.Internal
                 return v;
             }
 
-            var s = v.StartsWith("\"")
-                ? v.Substring(1, v.Length - 1)
-                : v;
-
-            return s.EndsWith("\"")
-                ? s.Substring(0, s.Length - 1)
-                : s;
+            return v.RemoveLeadingAndTrailingQuotes().UnescapeLiteral();
         }
 
         private static object DeserializeDateTime(string v)
@@ -163,7 +165,7 @@ namespace NetTriple.Annotation.Internal
             }
             else
             {
-                o = DateTime.Parse(v);
+                o = DateTime.Parse(v.RemoveLeadingAndTrailingQuotes());
             }
 
             return o;
