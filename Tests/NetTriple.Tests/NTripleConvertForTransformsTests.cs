@@ -571,5 +571,47 @@ namespace NetTriple.Tests
             // Assert
             Assert.AreEqual("909", player.Id);
         }
+
+        [TestMethod]
+        public void ToTriples_SomePropertiesAreNull_GeneratesExpectedTriples()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Meter2>("http://psi.hafslund.no/sesam/quant/meter")
+                    .Subject(m => m.NetOwnerAssetId, "http://psi.hafslund.no/sesam/quant/meter/{0}")
+                    .WithPropertyPredicateBase("http://psi.hafslund.no/sesam/quant/schema")
+                    .Prop(m => m.ManufacturerSerialNumber, "/manufacturerSerialNumber")
+                    .Prop(m => m.NetOwnerAssetId, "/netOwnerAssetId")
+                    .Prop(m => m.Label, "/label")
+                    .Prop(m => m.AssetModelName, "/assetModelName")
+                    .Prop(m => m.AssetState, "/assetState")
+                    .Prop(m => m.AssetLocation, "/assetLocation")
+                    .Prop(m => m.ManufacturingYear, "/manufacturingYear")
+                    .Prop(m => m.Firmware, "/firmware")
+                    .Prop(m => m.MeterInterval, "/meterInterval")
+                    .Prop(m => m.ServiceIntervalEntity, "/serviceIntervalEntity")
+                    .Prop(m => m.ServiceIntervalValue, "/serviceIntervalValue")
+                );
+
+            var meter = new Meter2
+            {
+                ManufacturerSerialNumber = "419900019",
+                NetOwnerAssetId = "0000026784",
+                AssetModelName = "Maalermodell",
+                AssetState = "WAREHOUSE",
+                AssetLocation = "Hovedlager",
+                ServiceIntervalEntity = 1,
+                ServiceIntervalValue = 1,
+                ManufacturingYear = 2013,
+                Firmware = "MET7005 2.4.38",
+                MeterInterval = 60
+            };
+
+            // Act
+            var triples = meter.ToTriples();
+
+            // Assert
+            Assert.AreEqual(12, triples.Count());
+        }
     }
 }

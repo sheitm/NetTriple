@@ -70,6 +70,7 @@
     <Compile Include="TestDomain\Match.cs" />
     <Compile Include="TestDomain\Measurement.cs" />
     <Compile Include="TestDomain\Meter.cs" />
+    <Compile Include="TestDomain\Meter2.cs" />
     <Compile Include="TestDomain\MeterReading.cs" />
     <Compile Include="TestDomain\NotAnnotated.cs" />
     <Compile Include="TestDomain\Order.cs" />

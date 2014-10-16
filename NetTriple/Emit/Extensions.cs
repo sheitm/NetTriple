@@ -11,6 +11,11 @@ namespace NetTriple.Emit
     {
         public static string ToTripleObject(this object obj)
         {
+            if (obj == null)
+            {
+                return null;
+            }
+
             if (obj is string)
             {
                 return string.Format("\"{0}\"", obj);
