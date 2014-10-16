@@ -573,7 +573,7 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
-        public void ToTriples_SomePropertiesAreNull_GeneratesExpectedTriples()
+        public void ToTriples_SomePropertiesAreNull_TripleNotGeneratedForNullProperties()
         {
             // Arrange
             LoadAllRdfClasses.LoadTransforms(
@@ -611,7 +611,8 @@ namespace NetTriple.Tests
             var triples = meter.ToTriples();
 
             // Assert
-            Assert.AreEqual(12, triples.Count());
+            Assert.AreEqual(11, triples.Count());
+            Assert.IsFalse(triples.Any(t => t.Predicate == "<http://psi.hafslund.no/sesam/quant/schema/label>"));
         }
     }
 }

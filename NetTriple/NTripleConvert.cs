@@ -15,7 +15,7 @@ namespace NetTriple
 
             var triples = new List<Triple>();
             converter.Convert(obj, triples, LoadAllRdfClasses.GetLocator());
-            return triples;
+            return triples.Where(t => t.Object != null);
         }
 
         public static T ToObject<T>(this IEnumerable<Triple> triples)
