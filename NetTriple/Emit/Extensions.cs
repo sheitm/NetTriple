@@ -26,6 +26,11 @@ namespace NetTriple.Emit
                 return obj.ToString().Replace(',', '.');
             }
 
+            if (obj is bool)
+            {
+                return obj.ToString().ToLower();
+            }
+
             if (obj is DateTime)
             {
                 var dt = (DateTime) obj;

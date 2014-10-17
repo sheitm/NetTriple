@@ -61,6 +61,7 @@
     <Compile Include="RdfChildrenOnClassAttributeTests.cs" />
     <Compile Include="RdfPropertyOnClassAttributeTests.cs" />
     <Compile Include="SampleConverter.cs" />
+    <Compile Include="TestDomain\AddressableDevice.cs" />
     <Compile Include="TestDomain\Book.cs" />
     <Compile Include="TestDomain\BookReview.cs" />
     <Compile Include="TestDomain\Car.cs" />

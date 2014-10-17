@@ -614,5 +614,85 @@ namespace NetTriple.Tests
             Assert.AreEqual(11, triples.Count());
             Assert.IsFalse(triples.Any(t => t.Predicate == "<http://psi.hafslund.no/sesam/quant/schema/label>"));
         }
+
+        [TestMethod]
+        public void ToTriples_WithBoolean_BooleSerializedCorrectly()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<AddressableDevice>("http://nettriples/adressabledevice")
+                    .Subject(m => m.Id, "http://nettriples/adressabledevice/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/adressabledevice/schema")
+                    .Prop(m => m.Id, "/id")
+                    .Prop(m => m.WillAcknowledge, "/willAcknowledge")
+                );
+
+            var dev = new AddressableDevice
+            {
+                Id = 6,
+                WillAcknowledge = true
+            };
+
+            // Act
+            var triples = dev.ToTriples().ToList();
+
+            // Assert
+            var trpl = triples.Single(t => t.Predicate == "<http://nettriples/adressabledevice/schema/willAcknowledge>");
+            Assert.AreEqual("true", trpl.Object);
+
+            foreach (var triple in triples)
+            {
+                Console.WriteLine(triple);
+            }
+        }
+
+        [TestMethod]
+        public void ToObject_WithSerializedBools_BooleanValuesAreSetCorrectly()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<AddressableDevice>("http://nettriples/adressabledevice")
+                    .Subject(m => m.Id, "http://nettriples/adressabledevice/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/adressabledevice/schema")
+                    .Prop(m => m.Id, "/id")
+                    .Prop(m => m.WillAcknowledge, "/willAcknowledge")
+                );
+
+            var typePred = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            var typeObject = "<http://nettriples/adressabledevice>";
+            var s1 = "<http://nettriples/adressabledevice/1>";
+            var triples1 = new List<Triple>
+            {
+                new Triple{ Subject = s1, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = s1, Predicate = "<http://nettriples/adressabledevice/schema/id>", Object = "1" },
+                new Triple{ Subject = s1, Predicate = "<http://nettriples/adressabledevice/schema/willAcknowledge>", Object = "true" },
+            };
+
+            var s2 = "<http://nettriples/adressabledevice/2>";
+            var triples2 = new List<Triple>
+            {
+                new Triple{ Subject = s2, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = s2, Predicate = "<http://nettriples/adressabledevice/schema/id>", Object = "2" },
+                new Triple{ Subject = s2, Predicate = "<http://nettriples/adressabledevice/schema/willAcknowledge>", Object = "1" },
+            };
+
+            var s3 = "<http://nettriples/adressabledevice/3>";
+            var triples3 = new List<Triple>
+            {
+                new Triple{ Subject = s3, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = s3, Predicate = "<http://nettriples/adressabledevice/schema/id>", Object = "3" },
+                new Triple{ Subject = s3, Predicate = "<http://nettriples/adressabledevice/schema/willAcknowledge>", Object = "\"true\"^^xsd:boolean" },
+            };
+
+            // Act
+            var o1 = triples1.ToObject<AddressableDevice>();
+            var o2 = triples2.ToObject<AddressableDevice>();
+            var o3 = triples3.ToObject<AddressableDevice>();
+
+            // Assert
+            Assert.IsTrue(o1.WillAcknowledge);
+            Assert.IsTrue(o2.WillAcknowledge);
+            Assert.IsTrue(o3.WillAcknowledge);
+        }
     }
 }

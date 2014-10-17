@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -7,8 +8,13 @@ namespace NetTriple.Internal
     public static class StringHelper
     {
         private const string RdbTypeRegexPattern = @"\^\^<http://[a-z,A-Z,0-9,.,/,#,:]*>";
+        private const string RdbTypeRegexPatter2 = @"\^\^xsd:[a-z,A-Z]*";
 
-        private readonly static Regex RdfTypeRegex = new Regex(RdbTypeRegexPattern);
+        private static readonly List<Regex> TypeRegexes = new List<Regex>
+        {
+            new Regex(RdbTypeRegexPattern),
+            new Regex(RdbTypeRegexPatter2)
+        }; 
 
         public static string RemoveRdfTypeInfo(this string s)
         {
@@ -17,13 +23,16 @@ namespace NetTriple.Internal
                 return s;
             }
 
-            if (!RdfTypeRegex.IsMatch(s))
+            foreach (var regex in TypeRegexes)
             {
-                return s;
+                var pair = RemoveRdfTypeInfoRegex(s, regex);
+                if (pair.Key)
+                {
+                    return pair.Value;
+                }
             }
 
-            var match = RdfTypeRegex.Match(s);
-            return s.Substring(0, match.Index);
+            return s;
         }
 
         public static string RemoveLeadingAndTrailingQuotes(this string v)
@@ -203,6 +212,17 @@ namespace NetTriple.Internal
             {
                 throw new FormatException("Unable to convert the String '" + hex + "' into a Unicode Character");
             }
+        }
+
+        private static KeyValuePair<bool, string> RemoveRdfTypeInfoRegex(string s, Regex regex)
+        {
+            if (!regex.IsMatch(s))
+            {
+                return new KeyValuePair<bool, string>(false, s);
+            }
+
+            var match = regex.Match(s);
+            return new KeyValuePair<bool, string>(true, s.Substring(0, match.Index));
         }
     }
 }

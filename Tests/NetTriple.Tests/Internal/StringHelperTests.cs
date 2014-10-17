@@ -46,6 +46,19 @@ namespace NetTriple.Tests.Internal
         }
 
         [TestMethod]
+        public void RemoveRdfTypeInfo_WithXsdtypeInfFormat_ItIsRemoved()
+        {
+            // Arrange
+            var input = "\"true\"^^xsd:boolean";
+
+            // Act
+            var output = input.RemoveRdfTypeInfo();
+
+            // Assert
+            Assert.AreEqual("\"true\"", output);
+        }
+
+        [TestMethod]
         public void RemoveRdfTypeInfo_WithoutTypeInfo_SameStringIsreturned()
         {
             // Arrange

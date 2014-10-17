@@ -23,7 +23,8 @@ namespace NetTriple.Annotation.Internal
             {typeof(long), v => long.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
             {typeof(decimal), v => decimal.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
             {typeof(Instant), DeserializeInstant},
-            {typeof(DateTime), DeserializeDateTime}
+            {typeof(DateTime), DeserializeDateTime},
+            {typeof(bool), DeserializeBoolean}
         };
 
         /// <summary>
@@ -169,6 +170,12 @@ namespace NetTriple.Annotation.Internal
             }
 
             return o;
+        }
+
+        private static object DeserializeBoolean(string v)
+        {
+            var vl = v.ToLower().RemoveRdfTypeInfo().RemoveLeadingAndTrailingQuotes();
+            return vl == "true" || vl == "1";
         }
 
         private static object DeserializeInstant(string arg)
