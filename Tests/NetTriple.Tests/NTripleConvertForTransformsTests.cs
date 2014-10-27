@@ -647,6 +647,82 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToObjects_ReferenceViaAbstractBaseClass_AreLinkedCorrectly()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Cat>("http://nettriples/cat")
+                    .Subject(m => m.Name, "http://nettriples/cat/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/animal/schema")
+                    .Prop(m => m.Name, "/name")
+                    .Relation(m => m.Enemies, "/enemies"),
+                BuildTransform.For<Dog>("http://nettriples/dog")
+                    .Subject(m => m.Name, "http://nettriples/dog/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/animal/schema")
+                    .Prop(m => m.Name, "/name")
+                    .Relation(m => m.Enemies, "/enemies")
+                );
+
+            var catSubject = "<http://nettriples/cat/Kitty>";
+            var dogSubject = "<http://nettriples/dog/Fido>";
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = catSubject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriples/cat>"},
+                new Triple{Subject = catSubject, Predicate = "<http://nettriples/animal/schema/name>", Object = "\"Kitty\""},
+                new Triple{Subject = catSubject, Predicate = "<http://nettriples/animal/schema/enemies>", Object = dogSubject},
+                new Triple{Subject = dogSubject, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriples/dog>"},
+                new Triple{Subject = dogSubject, Predicate = "<http://nettriples/animal/schema/name>", Object = "\"Fido\""},
+                new Triple{Subject = dogSubject, Predicate = "<http://nettriples/animal/schema/enemies>", Object = catSubject}
+            };
+
+            // Act
+            var objs = triples.ToObjects();
+
+            // Assert
+            var cat = (Cat)objs.Single(o => o is Cat);
+            var dog = (Dog)objs.Single(o => o is Dog);
+            Assert.AreSame(cat, dog.Enemies.First());
+            Assert.AreSame(dog, cat.Enemies.First());
+        }
+
+        [TestMethod]
+        public void ToTriples_ReferenceViaAbstractBaseClass_AreLinkedCorrectly()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Cat>("http://nettriples/cat")
+                    .Subject(m => m.Name, "http://nettriples/cat/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/animal/schema")
+                    .Prop(m => m.Name, "/name")
+                    .Relation(m => m.Enemies, "/enemies"),
+                BuildTransform.For<Dog>("http://nettriples/dog")
+                    .Subject(m => m.Name, "http://nettriples/dog/{0}")
+                    .WithPropertyPredicateBase("http://nettriples/animal/schema")
+                    .Prop(m => m.Name, "/name")
+                    .Relation(m => m.Enemies, "/enemies")
+                );
+
+            var dog = new Dog {Name = "Fido"};
+            var cat = new Cat {Name = "Kitty"};
+            dog.Enemies = new List<AnimalBase> {cat};
+            cat.Enemies = new List<AnimalBase> {dog};
+
+            // Act
+            var triples = cat.ToTriples().ToList();
+
+            // Assert
+            Assert.IsTrue(triples.Any(t =>
+                t.Subject == "<http://nettriples/dog/Fido>" &&
+                t.Predicate == "<http://nettriples/animal/schema/enemies>" &&
+                t.Object == "<http://nettriples/cat/Kitty>"));
+
+            Assert.IsTrue(triples.Any(t =>
+               t.Subject == "<http://nettriples/cat/Kitty>" &&
+               t.Predicate == "<http://nettriples/animal/schema/enemies>" &&
+               t.Object == "<http://nettriples/dog/Fido>"));
+        }
+
+        [TestMethod]
         public void ToObject_WithSerializedBools_BooleanValuesAreSetCorrectly()
         {
             // Arrange

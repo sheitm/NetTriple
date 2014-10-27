@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChildrenPredicateSpecification.cs" />
+    <Compile Include="Emit\BeingConverted.cs" />
     <Compile Include="Emit\ConverterLocator.cs" />
     <Compile Include="Emit\Extensions.cs" />
     <Compile Include="Emit\IConverter.cs" />

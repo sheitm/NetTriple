@@ -73,6 +73,11 @@ namespace NetTriple.Fluency
             return _locator.GetTransform(type);
         }
 
+        public IEnumerable<IBuiltTransform> GetSubclassTransforms(Type type)
+        {
+            return _locator.GetSubclassTransforms(type);
+        }
+
         public TransformBuilder<T> WithPropertyPredicateBase(string predicateBase)
         {
             _propertyPredicateBase = predicateBase;

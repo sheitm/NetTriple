@@ -48,6 +48,7 @@
     <Compile Include="Emit\InflationContextTests.cs" />
     <Compile Include="Emit\LinkerSourceCodeGeneratorTests.cs" />
     <Compile Include="Emit\RelationSourceCodeGeneratorTests.cs" />
+    <Compile Include="Emit\Samples.cs" />
     <Compile Include="Emit\SourceCodeGeneratorTests.cs" />
     <Compile Include="ExtensionsTests.cs" />
     <Compile Include="Fluency\AllRdfTransformsTests.cs" />
@@ -62,10 +63,13 @@
     <Compile Include="RdfPropertyOnClassAttributeTests.cs" />
     <Compile Include="SampleConverter.cs" />
     <Compile Include="TestDomain\AddressableDevice.cs" />
+    <Compile Include="TestDomain\AnimalBase.cs" />
     <Compile Include="TestDomain\Book.cs" />
     <Compile Include="TestDomain\BookReview.cs" />
     <Compile Include="TestDomain\Car.cs" />
+    <Compile Include="TestDomain\Cat.cs" />
     <Compile Include="TestDomain\Chapter.cs" />
+    <Compile Include="TestDomain\Dog.cs" />
     <Compile Include="TestDomain\HourMeasurement.cs" />
     <Compile Include="TestDomain\Husband.cs" />
     <Compile Include="TestDomain\Match.cs" />

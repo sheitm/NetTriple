@@ -156,6 +156,8 @@ namespace NetTriple.Annotation.Internal
             return v.RemoveLeadingAndTrailingQuotes().UnescapeLiteral();
         }
 
+        //public static IEnumerable<Type> GetSubclasses() 
+
         private static object DeserializeDateTime(string v)
         {
             object o;

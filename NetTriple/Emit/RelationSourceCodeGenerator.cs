@@ -83,12 +83,42 @@ namespace NetTriple.Emit
         private void AppendNonInverseRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
         {
             var propType = property.GetTypeOfProperty();
-            var childSubjectProp = GetNameOfSubjectProperty(propType, _transform);
+            var childSubjectProp = GetNameOfSubjectProperty(propType, _transform, false);
+            if (childSubjectProp.Key == null)
+            {
+                AppendNonInverseAbstractRelation(sb, property, attribute);
+                return;
+            }
+
             var childProp = string.Format("var co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", childSubjectProp.Value, childSubjectProp.Key);
             var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
             sb.Append(TemplateResources.ChildExpansionTemplate
                 .Replace("##PROP##", property.Name)
                 .Replace("##OBJECTASSIGNMET##", childProp)
+                .Replace("##PREDICATEASSIGNMENT##", pred));
+        }
+
+        private void AppendNonInverseAbstractRelation(StringBuilder sb, PropertyInfo property, IChildrenPredicateSpecification attribute)
+        {
+            var propType = property.GetTypeOfProperty();
+            var pred = string.Format("var p = \"<{0}>\";\r\n", attribute.Predicate);
+            var transforms = _transform.GetSubclassTransforms(propType);
+
+            var subString = transforms.Aggregate(
+                new StringBuilder("string co = null;\r\n"),
+                (builder, each) =>
+                {
+                    builder.AppendFormat("if (typeof({0}) == child.GetType())\r\n", each.Type.FullName);
+                    builder.AppendLine("{");
+
+                    builder.AppendFormat("co = string.Format(\"<{0}>\", child.{1}.ToString());\r\n", each.SubjectSpecification.Template, each.SubjectSpecification.Property.Name);
+                    builder.AppendLine("}");
+                    return builder;
+                }).ToString();
+
+            sb.Append(TemplateResources.ChildExpansionTemplate
+                .Replace("##PROP##", property.Name)
+                .Replace("##OBJECTASSIGNMET##", subString)
                 .Replace("##PREDICATEASSIGNMENT##", pred));
         }
 
@@ -152,14 +182,19 @@ namespace NetTriple.Emit
             return list;
         }
 
-        private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type, IBuiltTransform transform)
+        private KeyValuePair<string, string> GetNameOfSubjectProperty(Type type, IBuiltTransform transform, bool crashIfMissing = true)
         {
             if (transform != null)
             {
                 var relatedTransform = transform.GetRelatedTransform(type);
                 if (relatedTransform == null)
                 {
-                    throw new InvalidOperationException(string.Format("Could not find transform for type: {0}", type.FullName));
+                    if (crashIfMissing)
+                    {
+                        throw new InvalidOperationException(string.Format("Could not find transform for type: {0}", type.FullName));
+                    }
+
+                    return new KeyValuePair<string, string>(null, null);
                 }
 
                 return new KeyValuePair<string, string>(relatedTransform.SubjectSpecification.Property.Name, relatedTransform.SubjectSpecification.Template);

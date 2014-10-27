@@ -18,5 +18,10 @@ namespace NetTriple.Emit
         {
             return _transforms.SingleOrDefault(t => t.Type == type);
         }
+
+        public IEnumerable<IBuiltTransform> GetSubclassTransforms(Type type)
+        {
+            return _transforms.Where(t => t.Type.IsSubclassOf(type));
+        }
     }
 }

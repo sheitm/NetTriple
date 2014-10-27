@@ -155,6 +155,8 @@ namespace NetTriple.Emit
             sb.AppendFormat("var s1 = obj.{0}.ToString();\r\n", subjectProperty.Key);
             sb.AppendFormat("var template = \"<{0}>\";\r\n", subjectProperty.Value);
             sb.Append("var s = template.Replace(\"{0}\", s1);\r\n");
+            sb.Append("if (BeingConverted.IsConverting(s)) return;\r\n");
+            sb.Append("BeingConverted.Converting(s);\r\n");
 
             sb.Append("triples.Add(new Triple { ");
             sb.AppendFormat("Subject = s, Predicate = \"<{0}>\", Object = \"<{1}>\"",

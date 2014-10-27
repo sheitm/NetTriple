@@ -20,7 +20,7 @@ namespace NetTriple.Tests.Emit
 
             // Assert
             Assert.IsTrue(source.Contains("var template = \"<http://netriple.com/unittesting/orderdetail/{0}>\";"));
-            Assert.AreEqual(3631, source.Length);
+            Assert.AreEqual(3707, source.Length);
         }
 
         [TestMethod]
@@ -157,6 +157,32 @@ namespace NetTriple.Tests.Emit
             built.SetLocator(locator);
 
             var generator = new SourceCodeGenerator(built);
+
+            // Act
+            var source = generator.GetSourceCode();
+        }
+
+        [TestMethod]
+        public void Xx()
+        {
+            // Arrange
+            var built = BuildTransform.For<Cat>("http://nettriple/cat")
+                .Subject(c => c.Name, "http://nettriple/cat/{0}")
+                .WithPropertyPredicateBase("http://nettriple/animal")
+                .Prop(c => c.Name, "/name")
+                .Relation(c => c.Enemies, "/enemies");
+
+            var built2 = BuildTransform.For<Dog>("http://nettriple/dog")
+                .Subject(c => c.Name, "http://nettriple/dog/{0}")
+                .WithPropertyPredicateBase("http://nettriple/animal")
+                .Prop(c => c.Name, "/name")
+                .Relation(c => c.Enemies, "/enemies");
+
+            var locator = new TransformLocator(new List<IBuiltTransform> { built, built2 });
+            built.SetLocator(locator);
+            built2.SetLocator(locator);
+
+            var generator = new SourceCodeGenerator(built2);
 
             // Act
             var source = generator.GetSourceCode();

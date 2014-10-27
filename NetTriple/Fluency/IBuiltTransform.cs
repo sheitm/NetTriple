@@ -18,5 +18,6 @@ namespace NetTriple.Fluency
         void SetLocator(ITransformLocator locator);
 
         IBuiltTransform GetRelatedTransform(Type type);
+        IEnumerable<IBuiltTransform> GetSubclassTransforms(Type type);
     }
 }
