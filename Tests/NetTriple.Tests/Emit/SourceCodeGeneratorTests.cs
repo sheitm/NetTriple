@@ -187,5 +187,24 @@ namespace NetTriple.Tests.Emit
             // Act
             var source = generator.GetSourceCode();
         }
+
+        [TestMethod]
+        public void GetSource_ForClassWithSpecifiedProps_GeneratesExpectedCode()
+        {
+            // Arrange
+            var built = BuildTransform.For<WithQuasiNullables>("http://nettriples/withQuasiNullables")
+                .Subject(m => m.Id, "http://nettriples/withQuasiNullables/{0}")
+                .WithPropertyPredicateBase("http://nettriples/withQuasiNullables/schema")
+                .Prop(m => m.No, "/no", m => m.NoSpecified)
+                .Prop(m => m.Hour, "/hour", m => m.HourSpecified)
+                .Prop(m => m.Ok, "/ok", m => m.OkSpecified);
+
+            var locator = new TransformLocator(new List<IBuiltTransform> { built });
+            built.SetLocator(locator);
+            var generator = new SourceCodeGenerator(built);
+
+            // Act
+            var source = generator.GetSourceCode();
+        }
     }
 }

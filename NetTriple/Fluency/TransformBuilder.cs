@@ -102,7 +102,7 @@ namespace NetTriple.Fluency
             return this;
         }
 
-        public TransformBuilder<T> Prop(Expression<Func<T, object>> accessor, string predicate)
+        public TransformBuilder<T> Prop(Expression<Func<T, object>> accessor, string predicate, Expression<Func<T, object>> nullPropAccessor = null)
         {
             if (accessor == null)
             {
@@ -117,7 +117,11 @@ namespace NetTriple.Fluency
             var property = ReflectionHelper.FindProperty(accessor);
             var pred = string.IsNullOrEmpty(_propertyPredicateBase) ? predicate : string.Format("{0}{1}", _propertyPredicateBase, predicate);
 
-            _properties.Add(new PropertyPredicateSpecification(pred, (PropertyInfo)property));
+            var propertySpec = nullPropAccessor == null
+                ? new PropertyPredicateSpecification(pred, (PropertyInfo)property)
+                : new PropertyPredicateSpecification(pred, (PropertyInfo)property, (PropertyInfo)ReflectionHelper.FindProperty(nullPropAccessor));
+
+            _properties.Add(propertySpec);
 
             return this;
         }

@@ -85,6 +85,7 @@
     <Compile Include="TestDomain\TimeSeries.cs" />
     <Compile Include="TestDomain\Tournament.cs" />
     <Compile Include="TestDomain\Wife.cs" />
+    <Compile Include="TestDomain\WithQuasiNullables.cs" />
     <Compile Include="TestResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

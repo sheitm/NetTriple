@@ -101,6 +101,10 @@ namespace NetTriple.Emit
                 sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", ppInfo.Predicate);
                 sb.Append("if (triple != null) { obj.");
                 sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", prop.Name, prop.PropertyType.FullName);
+                if (ppInfo.PropertySpecifiedProperty != null)
+                {
+                    sb.AppendFormat("obj.{0} = true; ", ppInfo.PropertySpecifiedProperty.Name);
+                }
                 sb.AppendLine("}");
             }
 

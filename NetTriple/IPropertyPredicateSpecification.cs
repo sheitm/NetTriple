@@ -6,5 +6,6 @@ namespace NetTriple.Annotation
     {
         string Predicate { get; }
         PropertyInfo Property { get; }
+        PropertyInfo PropertySpecifiedProperty { get; }
     }
 }

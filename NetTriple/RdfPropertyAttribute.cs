@@ -9,6 +9,7 @@ namespace NetTriple.Annotation
         public string Predicate { get; set; }
 
         public PropertyInfo Property { get; private set; }
+        public PropertyInfo PropertySpecifiedProperty { get; private set; }
 
         public void SetProperty(PropertyInfo property)
         {

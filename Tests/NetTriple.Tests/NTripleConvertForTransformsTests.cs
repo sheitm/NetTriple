@@ -686,6 +686,37 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToObject_WithQuasiNullables_SpecifiedPropertiesSetCorrectly()
+        {
+            //Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<WithQuasiNullables>("http://nettriples/withQuasiNullables")
+                   .Subject(m => m.Id, "http://nettriples/withQuasiNullables/{0}")
+                   .WithPropertyPredicateBase("http://nettriples/withQuasiNullables/schema")
+                   .Prop(m => m.No, "/no", m => m.NoSpecified)
+                   .Prop(m => m.Hour, "/hour", m => m.HourSpecified)
+                   .Prop(m => m.Ok, "/ok", m => m.OkSpecified)
+                );
+
+            var subj = "http://nettriples/withQuasiNullables/1";
+
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = subj, Predicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", Object = "<http://nettriples/withQuasiNullables>"},
+                new Triple{Subject = subj, Predicate = "<http://nettriples/withQuasiNullables/schema/id>", Object = "1"}, 
+                new Triple{Subject = subj, Predicate = "<http://nettriples/withQuasiNullables/schema/no>", Object = "0"}
+            };
+
+            // Act
+            var obj = triples.ToObject<WithQuasiNullables>();
+
+            // Assert
+            Assert.IsTrue(obj.NoSpecified);
+            Assert.IsFalse(obj.OkSpecified);
+            Assert.IsFalse(obj.HourSpecified);
+        }
+
+        [TestMethod]
         public void ToTriples_ReferenceViaAbstractBaseClass_AreLinkedCorrectly()
         {
             // Arrange
