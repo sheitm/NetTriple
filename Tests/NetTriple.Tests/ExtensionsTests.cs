@@ -70,7 +70,7 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
-        public void ToNTriples_backAndForth_TriplesAsIdentical()
+        public void ToNTriples_BackAndForth_TriplesAsIdentical()
         {
             // Arrange
             var triples = GetTriples().ToList();
@@ -89,6 +89,58 @@ namespace NetTriple.Tests
                 var msg = string.Format("{0}", triple);
                 Assert.IsNotNull(triple2, msg);
             }
+        }
+
+        [TestMethod]
+        public void ToTriplesFromNTriples_WithDoubleSpaceInFrontOfObject_GetsExpectedTriples()
+        {
+            // Arrange
+
+            // Act
+            var triples = TestResources.TriplesDoubleSpace.ToTriplesFromNTriples().ToList();
+
+            // Assert
+            var terminalTriple = triples.Single(t => t.Predicate == "<http://nettriple.com/schema/terminal>");
+            Assert.AreEqual("\"000D6F00003862F5\"", terminalTriple.Object);
+        }
+
+        [TestMethod]
+        public void ToCamelCase_PascalCase_ReturnsExpected()
+        {
+            // Arrange
+            var pascal = "ThisIsPascal";
+
+            // Act
+            var camel = pascal.ToCamelCase();
+
+            // Assert
+            Assert.AreEqual("thisIsPascal", camel);
+        }
+
+        [TestMethod]
+        public void ToCamelCase_AlreadyPascalCase_ReturnsExpected()
+        {
+            // Arrange
+            var cml = "thisIsCamel";
+
+            // Act
+            var camel = cml.ToCamelCase();
+
+            // Assert
+            Assert.AreEqual(cml, camel);
+        }
+
+        [TestMethod]
+        public void ToCamelCase_SingleUppercase_ReturnsExpected()
+        {
+            // Arrange
+            var cml = "X";
+
+            // Act
+            var camel = cml.ToCamelCase();
+
+            // Assert
+            Assert.AreEqual("x", camel);
         }
 
         private IEnumerable<Triple> GetTriples()

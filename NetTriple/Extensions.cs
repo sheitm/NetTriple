@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -77,9 +78,31 @@ namespace NetTriple
                     {
                         Subject = arr[0],
                         Predicate = arr[1],
-                        Object = objString.TrimEnd()
+                        Object = objString.Trim()
                     };
                 });
+        }
+
+        public static string ToCamelCase(this string s)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                return s;
+            }
+
+            if (!char.IsLetter(s[0]))
+            {
+                return s;
+            }
+
+            if (char.IsLower(s[0]))
+            {
+                return s;
+            }
+
+            var textInfo = new CultureInfo("en-US", false).TextInfo;
+            var lwr = textInfo.ToLower(s[0]);
+            return string.Format("{0}{1}", lwr, s.Substring(1, s.Length-1));
         }
     }
 }

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Documentation\TypeTransformDocumentationTests.cs" />
     <Compile Include="Emit\DeclaredRelationTests.cs" />
     <Compile Include="Emit\ExtensionsTests.cs" />
     <Compile Include="Emit\InflationContextTests.cs" />
@@ -52,10 +53,12 @@
     <Compile Include="Emit\SourceCodeGeneratorTests.cs" />
     <Compile Include="ExtensionsTests.cs" />
     <Compile Include="Fluency\AllRdfTransformsTests.cs" />
+    <Compile Include="Fluency\ReflectedBuiltTransformTests.cs" />
     <Compile Include="Fluency\TransformBuilderTests.cs" />
     <Compile Include="Internal\ReflectionHelperTests.cs" />
     <Compile Include="Internal\StringHelperTests.cs" />
     <Compile Include="LoadAllRdfClassesTests.cs" />
+    <Compile Include="NTripleConvertForReflectedTransformsTests.cs" />
     <Compile Include="NTripleConvertForTransformsTests.cs" />
     <Compile Include="NTripleConvertTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

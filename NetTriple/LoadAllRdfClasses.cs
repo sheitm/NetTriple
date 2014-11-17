@@ -23,6 +23,7 @@ namespace NetTriple
         private static readonly Dictionary<string, Type> SubjectMap = new Dictionary<string, Type>();
         private static readonly List<DeclaredRelation> DeclaredRelations = new List<DeclaredRelation>(); 
         private static readonly List<Assembly> LoadedAssemblies = new List<Assembly>();
+        private static readonly List<IBuiltTransform> DeclaredTransforms = new List<IBuiltTransform>(); 
 
         /// <summary>
         /// Empties all inner structure. Should normally only be used
@@ -64,6 +65,10 @@ namespace NetTriple
             }
         }
 
+        public static IEnumerable<IBuiltTransform> GetDeclaredTransforms()
+        {
+            return DeclaredTransforms;
+        }
 
         public static void LoadTransforms(params IBuiltTransform[] transforms)
         {
@@ -71,6 +76,8 @@ namespace NetTriple
             {
                 return;
             }
+
+            DeclaredTransforms.AddRange(transforms);
 
             var locator = new TransformLocator(transforms);
             foreach (var builtTransform in transforms)

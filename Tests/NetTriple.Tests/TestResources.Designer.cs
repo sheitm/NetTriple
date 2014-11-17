@@ -82,5 +82,15 @@ namespace NetTriple.Tests {
                 return ResourceManager.GetString("NTriples2", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;http://netriple.com/meter/936569&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://psi.hafslund.no/sesam/quant/meter&gt; .
+        ///&lt;http://netriple.com/meter/936569&gt; &lt;http://nettriple.com/schema/terminal&gt;  &quot;000D6F00003862F5&quot; ..
+        /// </summary>
+        internal static string TriplesDoubleSpace {
+            get {
+                return ResourceManager.GetString("TriplesDoubleSpace", resourceCulture);
+            }
+        }
     }
 }
