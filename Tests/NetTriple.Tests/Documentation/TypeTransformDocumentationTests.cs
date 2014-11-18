@@ -53,6 +53,23 @@ namespace NetTriple.Tests.Documentation
             }
         }
 
+        [TestMethod]
+        public void Constructor_WithValidTransform_RelationsSetAsExpected()
+        {
+            // Arrange
+            var bt = GetTransformWithRelation();
+
+            // Act
+            var doc = new TypeTransformDocumentation(bt);
+
+            // Assert
+            Assert.AreEqual(2, doc.Relations.Count());
+            foreach (var relation in doc.Relations)
+            {
+                Console.WriteLine("{0} {1} {2}", relation.Predicate, relation.PropertyName, relation.PropertyType);
+            }
+        }
+
         private IBuiltTransform GetTransform()
         {
             return BuildTransform.For<Player>("http://nettriple/Player")
@@ -62,6 +79,17 @@ namespace NetTriple.Tests.Documentation
                 .Prop(p => p.Name, "/name")
                 .Prop(p => p.Gender, "/gender")
                 .Prop(p => p.DateOfBirth, "/dateOfBirth");
+        }
+
+        private IBuiltTransform GetTransformWithRelation()
+        {
+            return BuildTransform.For<Match>("http://nettriple/Match")
+                .Subject(p => p.Id, "http://nettriple/match/schema/{0}")
+                .WithPropertyPredicateBase("http://nettriple/match/schema")
+                .Prop(p => p.Id, "/id")
+                .Prop(p => p.Date, "/date")
+                .Relation(p => p.Player1, "/p1")
+                .Relation(p => p.Player2, "/p2");
         }
     }
 }

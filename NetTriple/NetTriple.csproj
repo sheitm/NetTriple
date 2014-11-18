@@ -63,6 +63,7 @@
     <Compile Include="ChildrenPredicateSpecification.cs" />
     <Compile Include="Documentation\DocumentationFinder.cs" />
     <Compile Include="Documentation\PropertyTransformDocumention.cs" />
+    <Compile Include="Documentation\RelationTransformDocumentation.cs" />
     <Compile Include="Documentation\SubjectTransformDocumentation.cs" />
     <Compile Include="Documentation\TypeTransformDocumentation.cs" />
     <Compile Include="Emit\BeingConverted.cs" />

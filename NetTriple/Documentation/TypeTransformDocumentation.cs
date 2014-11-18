@@ -14,11 +14,13 @@ namespace NetTriple.Documentation
             Type = builtTransform.Type.FullName;
             Properties = builtTransform.PropertySpecifications.Select(ps => new PropertyTransformDocumention(ps));
             Subject = new SubjectTransformDocumentation(builtTransform.SubjectSpecification);
+            Relations = builtTransform.RelationSpecifications.Select(rs => new RelationTransformDocumentation(rs));
         }
 
         public string RdfType { get; set; }
         public string Type { get; set; }
         public IEnumerable<PropertyTransformDocumention> Properties { get; set; }
+        public IEnumerable<RelationTransformDocumentation> Relations { get; set; } 
         public SubjectTransformDocumentation Subject { get; set; }
     }
 }
