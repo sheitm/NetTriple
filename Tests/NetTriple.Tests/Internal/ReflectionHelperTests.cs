@@ -210,5 +210,20 @@ namespace NetTriple.Annotation.Tests.Internal
             // Assert
             Assert.IsTrue(isAssignable);
         }
+
+        //[TestMethod]
+        //public void GetBody_WithValidLambdaExpression_GetsExpectedBody()
+        //{
+        //    // Arrange
+        //    Expression<Func<string, int>> lambda = s => int.Parse(s.Substring(4, 2));
+        //    Console.WriteLine(lambda.GetType().Name);
+        //    Console.WriteLine(lambda.ToString());
+        //    Console.WriteLine(lambda.Body.ToString());
+        //    // Act
+        //    var body = ReflectionHelper.GetBody(lambda);
+
+        //    // Assert
+        //    Assert.AreEqual("int.Parse(s.Substring(4, 2));", body);
+        //}
     }
 }

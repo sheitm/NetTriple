@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Dynamic;
+using System.Reflection;
 
 namespace NetTriple.Annotation
 {
@@ -18,5 +20,11 @@ namespace NetTriple.Annotation
         public string Predicate { get; private set; }
         public PropertyInfo Property { get; private set; }
         public PropertyInfo PropertySpecifiedProperty { get; private set; }
+        public Func<string, object> ValueConverter { get; private set; }
+
+        public void SetValueConverter(Func<string, object> converter)
+        {
+            ValueConverter = converter;
+        }
     }
 }

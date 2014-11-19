@@ -206,5 +206,23 @@ namespace NetTriple.Tests.Emit
             // Act
             var source = generator.GetSourceCode();
         }
+
+        [TestMethod]
+        public void GetSource_ForClassWithValueConverter_GetsExpectedCode()
+        {
+            // Arrange
+            var built = BuildTransform.For<Book>("http://netriple.com/unittesting/Book")
+                .Subject(m => m.Isbn, "http://netriple.com/unittesting/book/{0}")
+                .WithPropertyPredicateBase("http://netriple.com/unittesting/book")
+                .Prop(b => b.Isbn, "/isbn")
+                .Prop(b => b.YearOfPublication, "/year", valueConverter: s => int.Parse(string.Format("20{0}", s.Substring(4, 2))));
+
+            var locator = new TransformLocator(new List<IBuiltTransform> { built });
+            built.SetLocator(locator);
+            var generator = new SourceCodeGenerator(built);
+
+            // Act
+            var source = generator.GetSourceCode();
+        }
     }
 }

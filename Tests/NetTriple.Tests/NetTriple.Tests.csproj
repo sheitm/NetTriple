@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConverterSnippetsTests.cs" />
     <Compile Include="Documentation\TypeTransformDocumentationTests.cs" />
     <Compile Include="Emit\DeclaredRelationTests.cs" />
     <Compile Include="Emit\ExtensionsTests.cs" />

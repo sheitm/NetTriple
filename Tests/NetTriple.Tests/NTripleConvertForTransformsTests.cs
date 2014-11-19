@@ -801,5 +801,36 @@ namespace NetTriple.Tests
             Assert.IsTrue(o2.WillAcknowledge);
             Assert.IsTrue(o3.WillAcknowledge);
         }
+
+        [TestMethod]
+        public void ToObject_ForObjectWithValueConverter_SetValuesAsExpected()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Book>("http://netriple.com/unittesting/Book")
+                    .Subject(m => m.Isbn, "http://netriple.com/unittesting/book/{0}")
+                    .WithPropertyPredicateBase("http://netriple.com/unittesting/book")
+                    .Prop(b => b.Isbn, "/isbn")
+                    .Prop(b => b.YearOfPublication, "/year",
+                        valueConverter: s => int.Parse(string.Format("20{0}", s.Substring(4, 2))))
+                );
+
+            const string typePred = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            const string typeObject = "<http://netriple.com/unittesting/Book>";
+            const string subj = "<http://netriple.com/unittesting/book/990088007711>";
+
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = subj, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/unittesting/book/isbn>", Object = "990088007711" },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/unittesting/book/year>", Object = "010113" },
+            };
+
+            // Act
+            var book = triples.ToObject<Book>();
+
+            // Assert
+            Assert.AreEqual(2013, book.YearOfPublication);
+        }
     }
 }

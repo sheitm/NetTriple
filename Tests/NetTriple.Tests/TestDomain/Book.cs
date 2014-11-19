@@ -12,6 +12,8 @@ namespace NetTriple.Tests.TestDomain
         [RdfSubject(Template = "http://netriple.com/unittesting/book/{0}")]
         public string Isbn { get; set; }
 
+        public int YearOfPublication { get; set; }
+
         [RdfChildren(Inverse = false, Predicate = "http://netriple.com/unittesting/book/contained_chapter")]
         public IEnumerable<Chapter> Chapters { get; set; }
     }

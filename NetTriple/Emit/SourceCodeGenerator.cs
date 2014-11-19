@@ -100,7 +100,20 @@ namespace NetTriple.Emit
 
                 sb.AppendFormat("triple = triples.SingleOrDefault(t => t.Predicate == \"<{0}>\");\r\n", ppInfo.Predicate);
                 sb.Append("if (triple != null) { obj.");
-                sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", prop.Name, prop.PropertyType.FullName);
+                if (ppInfo.ValueConverter == null)
+                {
+                    sb.AppendFormat("{0} = triple.GetObject<{1}>(); ", prop.Name, prop.PropertyType.FullName);
+                }
+                else
+                {
+                    var key = ConverterSnippets.AddSnippet(ppInfo.ValueConverter);
+                    sb.AppendFormat(
+                        "{0} = ConverterSnippets.Invoke<{1}>(\"{2}\", triple.Object); ",
+                        prop.Name,
+                        prop.PropertyType.FullName,
+                        key);
+                }
+                
                 if (ppInfo.PropertySpecifiedProperty != null)
                 {
                     sb.AppendFormat("obj.{0} = true; ", ppInfo.PropertySpecifiedProperty.Name);

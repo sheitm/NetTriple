@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NetTriple.Tests
@@ -141,6 +143,18 @@ namespace NetTriple.Tests
 
             // Assert
             Assert.AreEqual("x", camel);
+        }
+
+        [TestMethod]
+        public void HowDoes_ExpressionToString_Work()
+        {
+            // Expression<Func<T, object>>
+            Expression<Func<string, int>> expr = s => int.Parse(s.Substring(4, 2));
+            var ex2 = (Expression) expr;
+            
+            var bdy = expr.Body.ToString();
+
+            Console.WriteLine(bdy);
         }
 
         private IEnumerable<Triple> GetTriples()
