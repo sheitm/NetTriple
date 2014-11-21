@@ -570,6 +570,8 @@ namespace NetTriple.Tests
 
             // Assert
             Assert.AreEqual("909", player.Id);
+
+            Console.WriteLine(LoadAllRdfClasses.WhatHaveIGot());
         }
 
         [TestMethod]

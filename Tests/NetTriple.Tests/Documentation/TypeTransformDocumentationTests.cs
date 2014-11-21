@@ -24,6 +24,19 @@ namespace NetTriple.Tests.Documentation
         }
 
         [TestMethod]
+        public void Constructor_WithValidTransform_XmlNamespaceSetCorrectly()
+        {
+            // Arrange
+            var bt = GetTransform();
+
+            // Act
+            var doc = new TypeTransformDocumentation(bt);
+
+            // Assert
+            Assert.AreEqual("http://nettriples.com/services", doc.XmlNamespace);
+        }
+
+        [TestMethod]
         public void Constructor_WithValidTransform_TypeSetCorrectly()
         {
             // Arrange

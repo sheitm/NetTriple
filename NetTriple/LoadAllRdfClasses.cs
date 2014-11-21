@@ -106,11 +106,11 @@ namespace NetTriple
 
         public static string WhatHaveIGot()
         {
-            return ConverterMap.Aggregate(
+            return SubjectMap.Aggregate(
                 new StringBuilder(),
                 (sb, pair) =>
                 {
-                    sb.AppendFormat("{0}\r\n", pair.Key.Name);
+                    sb.AppendFormat("{0}    {1}\r\n", pair.Key, pair.Value.Name);
                     return sb;
                 }).ToString();
         }
@@ -134,6 +134,8 @@ namespace NetTriple
 
             LoadTypes(types, new List<IBuiltTransform>());
         }
+
+        //public static Type GetType
 
         private static void LoadTypes(IEnumerable<Type> types, IEnumerable<IBuiltTransform> transforms)
         {
@@ -279,7 +281,11 @@ namespace NetTriple
                             builder.AppendFormat("{0}\r\n", each.GetMessage());
                             return builder;
                         });
-                    throw new InvalidOperationException(string.Format("The assembly could not be built, there are {0} diagnostic messages.", compileResult.Diagnostics.Count()));
+
+                    msg.AppendLine("=========== SOURCE ==============");
+                    msg.Append(sourceCode);
+
+                    throw new InvalidOperationException(msg.ToString());
                 }
 
                 assembly = Assembly.Load(stream.GetBuffer());
