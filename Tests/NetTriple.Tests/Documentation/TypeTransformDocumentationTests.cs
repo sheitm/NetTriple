@@ -83,6 +83,20 @@ namespace NetTriple.Tests.Documentation
             }
         }
 
+        [TestMethod]
+        public void GetSampleNTriples_ValidTransform_GetsExpectedTripes()
+        {
+            // Arrange
+            var bt = GetTransform();
+            var doc = new TypeTransformDocumentation(bt);
+
+            // Act
+            var nTriples = doc.GetSampleNTriples();
+
+            // Assert
+            Console.WriteLine(nTriples);
+        }
+
         private IBuiltTransform GetTransform()
         {
             return BuildTransform.For<Player>("http://nettriple/Player")
