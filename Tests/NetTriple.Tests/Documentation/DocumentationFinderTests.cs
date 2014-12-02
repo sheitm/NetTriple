@@ -41,5 +41,18 @@ namespace NetTriple.Tests.Documentation
             // Assert
             Assert.AreEqual(2, docList.Count());
         }
+
+        [TestMethod]
+        public void GetSampleNTriples_ForEntitiesWithRelations_NTriplesHasReleations()
+        {
+            // Arrange
+            var doc = DocumentationFinder.GetTypeDocumentation().Single(d => d.RdfType == "http://nettriple/Match");
+
+            // Act
+            var nTriples = doc.GetSampleNTriples();
+
+            // Assert
+            
+        }
     }
 }

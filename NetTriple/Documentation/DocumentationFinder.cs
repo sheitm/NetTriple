@@ -7,7 +7,14 @@ namespace NetTriple.Documentation
     {
         public static IEnumerable<TypeTransformDocumentation> GetTypeDocumentation()
         {
-            return LoadAllRdfClasses.GetDeclaredTransforms().Select(dt => new TypeTransformDocumentation(dt));
+            var docs = LoadAllRdfClasses.GetDeclaredTransforms().Select(dt => new TypeTransformDocumentation(dt)).ToList();
+
+            foreach (var doc in docs)
+            {
+                doc.SetContext(docs);
+            }
+
+            return docs;
         }
     }
 }

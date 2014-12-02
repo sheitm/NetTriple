@@ -11,6 +11,8 @@ namespace NetTriple.Documentation
     {
         private static readonly Random Rand = new Random();
 
+        private IEnumerable<TypeTransformDocumentation> _docs;
+
         public TypeTransformDocumentation() { }
 
         public TypeTransformDocumentation(IBuiltTransform builtTransform)
@@ -35,9 +37,18 @@ namespace NetTriple.Documentation
         public string GetSampleNTriples()
         {
             var sb = new StringBuilder();
-            var subjectPair = Subject.GetSampleSubject();
+            string s;
+            AppendSampleNTriples(sb, out s);
 
-            sb.AppendFormat("<{0}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <{1}> . \r\n", 
+            return sb.ToString();
+        }
+
+        public void AppendSampleNTriples(StringBuilder sb, out string subject)
+        {
+            var subjectPair = Subject.GetSampleSubject();
+            subject = subjectPair.Value;
+
+            sb.AppendFormat("<{0}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <{1}> . \r\n",
                 subjectPair.Value,
                 RdfType);
 
@@ -46,16 +57,23 @@ namespace NetTriple.Documentation
                 var v = property.PropertyName == Subject.PropertyName
                     ? GetSampleValue(property.GetPropertyType(), subjectPair.Key)
                     : GetSampleValue(property.GetPropertyType());
-                //var v = property.PropertyName == Subject.PropertyName
-                //    ? subjectPair.Key
-                //    : typeof(int) == property.GetPropertyType()
-                //        ? Rand.Next().ToString()
-                //        : Guid.NewGuid().ToString().Substring(0, 8);
 
                 sb.AppendFormat("<{0}> <{1}> {2} .\r\n", subjectPair.Value, property.Predicate, v);
             }
 
-            return sb.ToString();
+            if (_docs != null && Relations != null)
+            {
+                foreach (var relation in Relations)
+                {
+                    var related = _docs.SingleOrDefault(d => d.Type == relation.PropertyType);
+                    if (related != null)
+                    {
+                        string s;
+                        related.AppendSampleNTriples(sb, out s);
+                        sb.AppendFormat("<{0}> <{1}> <{2}> .\r\n", subjectPair.Value, relation.Predicate, s);
+                    }
+                }
+            }
         }
 
         private string GetSampleValue(Type type, string v = null)
@@ -93,6 +111,11 @@ namespace NetTriple.Documentation
             {
                 XmlNamespace = ((XmlTypeAttribute) attrib).Namespace;
             }
+        }
+
+        public void SetContext(IEnumerable<TypeTransformDocumentation> docs)
+        {
+            _docs = docs;
         }
     }
 }
