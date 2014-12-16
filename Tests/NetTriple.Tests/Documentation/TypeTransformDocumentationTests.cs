@@ -97,6 +97,20 @@ namespace NetTriple.Tests.Documentation
             Console.WriteLine(nTriples);
         }
 
+        [TestMethod]
+        public void GetSampleNTriples_WithStruct_GetsExpectedTripes()
+        {
+            // Arrange
+            var bt = GetTransformWithStruct();
+            var doc = new TypeTransformDocumentation(bt);
+
+            // Act
+            var nTriples = doc.GetSampleNTriples();
+
+            // Assert
+            Console.WriteLine(nTriples);
+        }
+
         private IBuiltTransform GetTransform()
         {
             return BuildTransform.For<Player>("http://nettriple/Player")
@@ -117,6 +131,27 @@ namespace NetTriple.Tests.Documentation
                 .Prop(p => p.Date, "/date")
                 .Relation(p => p.Player1, "/p1")
                 .Relation(p => p.Player2, "/p2");
+        }
+
+        private IBuiltTransform GetTransformWithStruct()
+        {
+            return BuildTransform.For<Sr>("http://psi.hafslund.no/sesam/quant/meterreading-day")
+               .Subject(s => s.Id, "http://psi.hafslund.no/sesam/quant/meterreading-day/{0}")
+               .WithPropertyPredicateBase("http://psi.hafslund.no/sesam/quant/schema")
+               .Prop(s => s.Id, "/id")
+               .Prop(s => s.Mpt, "/mpt")
+               .Prop(s => s.Msno, "/msno")
+               .Prop(s => s.Rty, "/rty")
+               .Prop(s => s.Vty, "/vty")
+               .Prop(s => s.Un, "/un")
+               .Struct<Mv>(s => s.MeterValues, "/values",
+                   x => x.Val,
+                   x => x.Ts,
+                   x => x.Interval,
+                   x => x.Cm,
+                   x => x.Sts,
+                   x => x.Cst);
+                
         }
     }
 }

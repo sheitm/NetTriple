@@ -66,6 +66,7 @@
     <Compile Include="Documentation\PropertyTransformDocumention.cs" />
     <Compile Include="Documentation\RelationTransformDocumentation.cs" />
     <Compile Include="Documentation\SampleNTriplesContext.cs" />
+    <Compile Include="Documentation\StructureTransformDocumentation.cs" />
     <Compile Include="Documentation\SubjectTransformDocumentation.cs" />
     <Compile Include="Documentation\TypeTransformDocumentation.cs" />
     <Compile Include="Emit\BeingConverted.cs" />

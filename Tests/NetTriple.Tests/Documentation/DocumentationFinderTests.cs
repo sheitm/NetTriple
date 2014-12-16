@@ -39,7 +39,7 @@ namespace NetTriple.Tests.Documentation
             var docList = DocumentationFinder.GetTypeDocumentation().ToList();
 
             // Assert
-            Assert.AreEqual(2, docList.Count());
+            Assert.AreEqual(4, docList.Count());
         }
 
         [TestMethod]

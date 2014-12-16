@@ -96,7 +96,7 @@ namespace NetTriple
 
             foreach (var pair in subjectMap)
             {
-                var thisType = LoadAllRdfClasses.GetTypeForSubject(pair.Key);
+                var thisType = LoadAllRdfClasses.GetTypeForTriples(pair.Value);
                 var converter = LoadAllRdfClasses.GetConverter(thisType);
                 converter.Inflate(pair.Value.Select(t => t.ToString()), context, locator);
             }

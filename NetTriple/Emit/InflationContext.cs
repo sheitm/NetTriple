@@ -62,7 +62,9 @@ namespace NetTriple.Emit
 
         public T Get<T>(string sourceSubject, string predicate)
         {
-            var triple = _allTriples.SingleOrDefault(t => t.IsMatch(sourceSubject, predicate));
+            //var triple = _allTriples.SingleOrDefault(t => t.IsMatch(sourceSubject, predicate));
+            var angled = string.Format("<{0}>", predicate);
+            var triple = _allTriples.SingleOrDefault(t => t.Predicate == angled || t.Predicate == predicate);
             if (triple == null)
             {
                 return default(T);

@@ -21,6 +21,90 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToObject_SingleTriplesWithRandomStructure_GetsExpectedObject()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Match>("http://nettriple/Match")
+                .Subject(p => p.Id, "http://nettriple/match/{0}")
+                .WithPropertyPredicateBase("http://nettriple/match")
+                .Prop(p => p.Id, "/id")
+                .Prop(p => p.Date, "/date"));
+
+            const string matchSubject = "<http://this_is_a_random_subject>";
+            const string typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = matchSubject, Predicate = typePredicate, Object = "<http://nettriple/Match>"},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/id>", Object = "1"},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/date>", Object = "\"2014-09-17T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"}
+            };
+
+            // Act
+            var match = triples.ToObject<Match>();
+
+            // Assert
+            Assert.AreEqual(1, match.Id);
+        }
+
+        [TestMethod]
+        public void ToObject_StructuredTriplesWithRandomStructure_GetsExpectedObject()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Match>("http://nettriple/Match")
+                    .Subject(p => p.Id, "http://nettriple/match/{0}")
+                    .WithPropertyPredicateBase("http://nettriple/match")
+                    .Prop(p => p.Id, "/id")
+                    .Prop(p => p.Date, "/date")
+                    .Relation(m => m.Player1, "/player_1")
+                    .Relation(m => m.Player2, "/player_2"),
+
+                BuildTransform.For<Player>("http://nettriple/Player")
+                    .Subject(p => p.Id, "http://nettriple/player/{0}")
+                    .WithPropertyPredicateBase("http://nettriple/player")
+                    .Prop(p => p.Id, "/id")
+                    .Prop(p => p.Name, "/name")
+                    .Prop(p => p.Gender, "/gender")
+                    .Prop(p => p.DateOfBirth, "/dateOfBirth"));
+
+            const string matchSubject = "<http://this_is_a_random_subject>";
+            const string player1Subject = "<http://plyr1>";
+            const string player2Subject = "<http://aCompletelyDifferentSubject>";
+            const string typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = matchSubject, Predicate = typePredicate, Object = "<http://nettriple/Match>"},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/id>", Object = "1"},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/date>", Object = "\"2014-09-17T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/player_1>", Object = player1Subject},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/player_2>", Object = player2Subject},
+
+                new Triple{Subject = player1Subject, Predicate = typePredicate, Object = "<http://nettriple/Player>"},
+                new Triple{Subject = player1Subject, Predicate = "<http://nettriple/player/id>", Object = "\"909\""},
+                new Triple{Subject = player1Subject, Predicate = "<http://nettriple/player/name>", Object = "\"Bjørn Borg\""},
+                new Triple{Subject = player1Subject, Predicate = "<http://nettriple/player/gender>", Object = "Male"},
+                new Triple{Subject = player1Subject, Predicate = "<http://nettriple/player/dateOfBirth>", Object = "\"1956-06-06T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"},
+
+                new Triple{Subject = player2Subject, Predicate = typePredicate, Object = "<http://nettriple/Player>"},
+                new Triple{Subject = player2Subject, Predicate = "<http://nettriple/player/id>", Object = "1001"},
+                new Triple{Subject = player2Subject, Predicate = "<http://nettriple/player/name>", Object = "\"John McEnroe\""},
+                new Triple{Subject = player2Subject, Predicate = "<http://nettriple/player/gender>", Object = "Male"},
+                new Triple{Subject = player2Subject, Predicate = "<http://nettriple/player/dateOfBirth>", Object = "\"1959-02-16T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"},
+            };
+
+            // Act
+            var match = triples.ToObject<Match>();
+
+            // Assert
+            Assert.AreEqual(1, match.Id);
+            Assert.AreEqual("909", match.Player1.Id);
+            Assert.AreEqual("1001", match.Player2.Id);
+        }
+
+        [TestMethod]
         public void ToObject_UnaryRelationsDefinedByTransform_GetsExpectedObjectGraph()
         {
             // Arrange

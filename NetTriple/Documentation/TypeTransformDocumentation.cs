@@ -22,6 +22,7 @@ namespace NetTriple.Documentation
             Properties = builtTransform.PropertySpecifications.Select(ps => new PropertyTransformDocumention(ps));
             Subject = new SubjectTransformDocumentation(builtTransform.SubjectSpecification);
             Relations = builtTransform.RelationSpecifications.Select(rs => new RelationTransformDocumentation(rs));
+            Structures = builtTransform.StructureTransforms.Select(st => new StructureTransformDocumentation(st));
 
             SetXmlData(builtTransform);
         }
@@ -31,6 +32,7 @@ namespace NetTriple.Documentation
         public IEnumerable<PropertyTransformDocumention> Properties { get; set; }
         public IEnumerable<RelationTransformDocumentation> Relations { get; set; } 
         public SubjectTransformDocumentation Subject { get; set; }
+        public IEnumerable<StructureTransformDocumentation> Structures { get; set; } 
 
         public string XmlNamespace { get; set; }
 
@@ -73,6 +75,11 @@ namespace NetTriple.Documentation
                         sb.AppendFormat("<{0}> <{1}> <{2}> .\r\n", subjectPair.Value, relation.Predicate, s);
                     }
                 }
+            }
+
+            foreach (var structure in Structures)
+            {
+                sb.AppendFormat("<{0}> <{1}> {2} .\r\n", subjectPair.Value, structure.Predicate, structure.GetSample());
             }
         }
 

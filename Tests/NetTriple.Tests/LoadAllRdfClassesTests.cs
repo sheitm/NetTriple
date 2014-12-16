@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NetTriple.Fluency;
 using NetTriple.Tests.TestDomain;
 
 namespace NetTriple.Tests
@@ -8,6 +10,12 @@ namespace NetTriple.Tests
     [TestClass]
     public class LoadAllRdfClassesTests
     {
+        [TestInitialize]
+        public void SetUp()
+        {
+            LoadAllRdfClasses.Clear();
+        }
+
         [TestMethod]
         public void Find_HappyDays_FindsTypesAsExpected()
         {
@@ -106,6 +114,35 @@ namespace NetTriple.Tests
             // Act
             LoadAllRdfClasses.LoadFromAssemblyOf<Book>();
             LoadAllRdfClasses.LoadFromAssemblyOf<Book>();
+        }
+
+        [TestMethod]
+        public void GetTypeForTriples_WithLoadedClasses_GetsExpectedType()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Match>("http://nettriple/Match")
+                .Subject(p => p.Id, "http://nettriple/match/{0}")
+                .WithPropertyPredicateBase("http://nettriple/match")
+                .Prop(p => p.Id, "/id")
+                .Prop(p => p.Date, "/date"));
+
+            const string matchSubject = "<http://this_is_a_random_subject>";
+            const string typePredicate = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+
+            var triples = new List<Triple>
+            {
+                new Triple{Subject = matchSubject, Predicate = typePredicate, Object = "<http://nettriple/Match>"},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/id>", Object = "1"},
+                new Triple{Subject = matchSubject, Predicate = "<http://nettriple/match/date>", Object = "\"2014-09-17T00:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"}
+            };
+
+            // Act
+            var type = LoadAllRdfClasses.GetTypeForTriples(triples);
+
+            // Assert
+            Assert.AreSame(typeof(Match), type);
+
         }
     }
 }

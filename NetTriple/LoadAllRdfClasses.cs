@@ -19,6 +19,8 @@ namespace NetTriple
     /// </summary>
     public static class LoadAllRdfClasses
     {
+        private const string TypePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+
         private static readonly Dictionary<Type, IConverter> ConverterMap = new Dictionary<Type, IConverter>();
         private static readonly Dictionary<string, Type> SubjectMap = new Dictionary<string, Type>();
         private static readonly List<DeclaredRelation> DeclaredRelations = new List<DeclaredRelation>(); 
@@ -135,7 +137,23 @@ namespace NetTriple
             LoadTypes(types, new List<IBuiltTransform>());
         }
 
-        //public static Type GetType
+        public static Type GetTypeForTriples(IEnumerable<Triple> triples)
+        {
+            var tpAngled = string.Format("<{0}>", TypePredicate);
+            var typeTriple = triples.SingleOrDefault(triple => triple.Predicate == tpAngled || triple.Predicate == TypePredicate);
+            if (typeTriple == null)
+            {
+                throw new ArgumentException("No triple with type predicate");
+            }
+
+            var transform = DeclaredTransforms.SingleOrDefault(t => string.Format("<{0}>", t.TypeString) == typeTriple.Object || t.TypeString == typeTriple.Object);
+            if (transform == null)
+            {
+                throw new InvalidOperationException(string.Format("No declared transform for rdf type {0}", typeTriple.Object));
+            }
+
+            return transform.Type;
+        }
 
         private static void LoadTypes(IEnumerable<Type> types, IEnumerable<IBuiltTransform> transforms)
         {

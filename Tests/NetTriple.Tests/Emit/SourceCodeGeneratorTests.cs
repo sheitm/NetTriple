@@ -224,5 +224,32 @@ namespace NetTriple.Tests.Emit
             // Act
             var source = generator.GetSourceCode();
         }
+
+        [TestMethod]
+        public void GetSource_WithRef_GetsExpectedCode()
+        {
+            var built = BuildTransform.For<Match>("http://nettriple/Match")
+                .Subject(p => p.Id, "http://nettriple/match/{0}")
+                .WithPropertyPredicateBase("http://nettriple/match")
+                .Prop(p => p.Id, "/id")
+                .Prop(p => p.Date, "/date")
+                .Relation(m => m.Player1, "/player_1")
+                .Relation(m => m.Player2, "/player_2");
+
+            var builtPlayer = BuildTransform.For<Player>("http://nettriple/Player")
+                .Subject(p => p.Id, "http://nettriple/player/{0}")
+                .WithPropertyPredicateBase("http://nettriple/player")
+                .Prop(p => p.Id, "/id")
+                .Prop(p => p.Name, "/name")
+                .Prop(p => p.Gender, "/gender")
+                .Prop(p => p.DateOfBirth, "/dateOfBirth");
+
+            var locator = new TransformLocator(new List<IBuiltTransform> { built, builtPlayer });
+            built.SetLocator(locator);
+            var generator = new SourceCodeGenerator(built);
+
+            // Act
+            var source = generator.GetSourceCode();
+        }
     }
 }

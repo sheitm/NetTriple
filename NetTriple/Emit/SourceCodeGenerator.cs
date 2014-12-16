@@ -86,13 +86,14 @@ namespace NetTriple.Emit
             var subjectProperty = GetNameOfSubjectProperty(_type);
             sb.AppendLine("triple = triples.First();");
             var subjectPropertyType = GetTypeOfSubjectProperty(_type);
-            if (IdIsAssignable(_type))
-            {
-                sb.AppendFormat(
-                    subjectPropertyType == typeof (int)
-                        ? "obj.{0} = int.Parse(triple.Subject.GetIdOfSubject());\r\n"
-                        : "obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
-            }
+
+            //if (IdIsAssignable(_type))
+            //{
+            //    sb.AppendFormat(
+            //        subjectPropertyType == typeof (int)
+            //            ? "obj.{0} = int.Parse(triple.Subject.GetIdOfSubject());\r\n"
+            //            : "obj.{0} = triple.Subject.GetIdOfSubject();\r\n", subjectProperty.Key);
+            //}
 
             foreach (var ppInfo in GetRdfProperties())
             {
