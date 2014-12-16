@@ -37,6 +37,7 @@ namespace NetTriple
             SubjectMap.Clear();
             DeclaredRelations.Clear();
             LoadedAssemblies.Clear();
+            DeclaredTransforms.Clear();
         }
 
         /// <summary>
