@@ -19,6 +19,7 @@ namespace NetTriple.Annotation.Internal
             {typeof(string), WashStringObject},
 
             {typeof(int), v => int.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
+            {typeof(short), v => short.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
             {typeof(float), v => float.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
             {typeof(double), v => double.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},
             {typeof(long), v => long.Parse(v.Replace(',', '.'), CultureInfo.InvariantCulture)},

@@ -918,5 +918,36 @@ namespace NetTriple.Tests
             // Assert
             Assert.AreEqual(2013, book.YearOfPublication);
         }
+
+        [TestMethod]
+        public void ToObject_WithShort_ShortSetAsExpected()
+        {
+            //
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<EntityWithShort>("http://netriple.com/short")
+                    .Subject(m => m.Id, "http://netriple.com/unittesting/short/{0}")
+                    .WithPropertyPredicateBase("http://netriple.com/short")
+                    .Prop(b => b.Id, "/id")
+                    .Prop(b => b.MyShort, "/myshort")
+                );
+
+            var subj = "ss";
+            short s = 2;
+            const string typePred = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            const string typeObject = "<http://netriple.com/short>";
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = subj, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/short/id>", Object = "1" },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/short/myshort>", Object = s.ToString() },
+            };
+
+            // Act
+            var ms = triples.ToObject<EntityWithShort>();
+
+            // Assert
+            Assert.AreEqual(s, ms.MyShort);
+        }
     }
 }

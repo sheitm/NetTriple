@@ -75,6 +75,7 @@
     <Compile Include="TestDomain\Cat.cs" />
     <Compile Include="TestDomain\Chapter.cs" />
     <Compile Include="TestDomain\Dog.cs" />
+    <Compile Include="TestDomain\EntityWithShort.cs" />
     <Compile Include="TestDomain\HourMeasurement.cs" />
     <Compile Include="TestDomain\Husband.cs" />
     <Compile Include="TestDomain\Match.cs" />
