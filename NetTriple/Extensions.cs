@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 
 namespace NetTriple
 {
     public static class Extensions
     {
+        private const string TypePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+
         /// <summary>
         /// Converts the triples to the string format NTriples, and
         /// then transforms this string to byte representation.
@@ -36,6 +39,76 @@ namespace NetTriple
             Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
             var nTriples = new string(chars);
             return nTriples.ToTriplesFromNTriples();
+        }
+
+
+        public static IEnumerable<Triple> ToTypeUniqueTriples(this IEnumerable<Triple> triples)
+        {
+            var subjectMap = GetSubjectMap(triples);
+
+            return subjectMap.Aggregate(
+                new List<Triple>(),
+                (result, pair) =>
+                {
+                    var c = pair.Value.Count(t => t.Predicate.Contains(TypePredicate));
+                    if (c <= 1)
+                    {
+                        result.AddRange(pair.Value);
+                    }
+                    else
+                    {
+                        foreach (var duplicated in DuplicateMultitypeTriples(pair.Value))
+                        {
+                            result.AddRange(duplicated);
+                        }
+                    }
+
+                    return result;
+                });
+        }
+
+        private static IEnumerable<IEnumerable<Triple>> DuplicateMultitypeTriples(IEnumerable<Triple> triples)
+        {
+            return triples
+                .Where(t => t.Predicate.Contains(TypePredicate))
+                .Select(t => t.Object)
+                .Select(typeString =>
+                {
+                    var subject = string.Format("<{0}>", Guid.NewGuid().ToString());
+
+                    var list = new List<Triple>();
+                    list.Add(new Triple { Subject = subject, Predicate = string.Format("<{0}>", TypePredicate), Object = typeString });
+                    list.AddRange(
+                        triples
+                        .Where(t => !t.Predicate.Contains(TypePredicate))
+                        .Select(t => new Triple{Subject = subject, Predicate = t.Predicate, Object = t.Object}));
+
+                    return list;
+                });
+        }
+
+        private static Dictionary<string, List<Triple>> GetSubjectMap(IEnumerable<Triple> triples)
+        {
+            var subjectMap = triples.Aggregate(
+                new Dictionary<string, List<Triple>>(),
+                (map, triple) =>
+                {
+                    List<Triple> list;
+                    if (map.ContainsKey(triple.Subject))
+                    {
+                        list = map[triple.Subject];
+                    }
+                    else
+                    {
+                        list = new List<Triple>();
+                        map[triple.Subject] = list;
+                    }
+
+                    list.Add(triple);
+
+                    return map;
+                });
+            return subjectMap;
         }
 
         public static string ToNTriples(this IEnumerable<Triple> triples)

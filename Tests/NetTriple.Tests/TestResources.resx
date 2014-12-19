@@ -145,4 +145,21 @@
     <value>&lt;http://netriple.com/meter/936569&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://psi.hafslund.no/sesam/quant/meter&gt; .
 &lt;http://netriple.com/meter/936569&gt; &lt;http://nettriple.com/schema/terminal&gt;  "000D6F00003862F5" .</value>
   </data>
+  <data name="TriplesTypeDuplicated" xml:space="preserve">
+    <value>&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/MeterPoint&gt;
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/meterPointId&gt; "mpid_102"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/distributionPointId&gt; "DpId_102"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/consumptionType&gt; "ELECTRICITY"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/operationalState&gt; "INSTALLED"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/description&gt; "Nytt meterpoint"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/DistributionPoint&gt;
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/distributionPointId&gt; "dpid_103"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/operationalState2&gt; "APPROVED"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/parentDistributionPointId&gt; "dpid_101"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/connectionStatus&gt; "CONNECTED"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/phases&gt; 3 .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/fuseSize&gt; 50 .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/voltage&gt; 230 .
+&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/description2&gt; "distributionpoint beskrivelse"^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .</value>
+  </data>
 </root>

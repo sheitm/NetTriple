@@ -157,6 +157,24 @@ namespace NetTriple.Tests
             Console.WriteLine(bdy);
         }
 
+        [TestMethod]
+        public void ToTypeUniqueTriples_WithDuplicatedTriples_ReturnsDeduplicatedTriples()
+        {
+            // Arrange
+            var triples = TestResources.TriplesTypeDuplicated.ToTriplesFromNTriples().ToList();
+
+            // Act
+            var duplicated = triples.ToTypeUniqueTriples().ToList();
+
+            // Assert
+            Assert.AreEqual((triples.Count() * 2) - 2, duplicated.Count());
+
+            foreach (var triple in duplicated)
+            {
+                Console.WriteLine(triple);
+            }
+        }
+
         private IEnumerable<Triple> GetTriples()
         {
             var measurmentSubject = "<http://netriple.com/unittesting/measurement/111>";

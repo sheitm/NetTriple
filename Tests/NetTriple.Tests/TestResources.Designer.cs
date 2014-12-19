@@ -92,5 +92,16 @@ namespace NetTriple.Tests {
                 return ResourceManager.GetString("TriplesDoubleSpace", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/MeterPoint&gt;
+        ///&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/meterPointId&gt; &quot;mpid_102&quot;^^&lt;http://www.w3.org/2001/XMLSchema#string&gt; .
+        ///&lt;http://psi.hafslund.no/sesam/geonis/meterpoint/dpid_103&gt; &lt;http://psi.hafslund.no/sesam/quant/schema/distributionPointId&gt; &quot;DpId_102&quot;^^&lt;http://www.w3.org/2001/XMLSchema#string&gt;  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TriplesTypeDuplicated {
+            get {
+                return ResourceManager.GetString("TriplesTypeDuplicated", resourceCulture);
+            }
+        }
     }
 }
