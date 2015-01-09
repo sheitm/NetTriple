@@ -920,6 +920,85 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToObject_WithUnknownRdfTypes_NoException()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Book>("http://netriple.com/unittesting/Book")
+                    .Subject(m => m.Isbn, "http://netriple.com/unittesting/book/{0}")
+                    .WithPropertyPredicateBase("http://netriple.com/unittesting/book")
+                    .Prop(b => b.Isbn, "/isbn")
+                    .Prop(b => b.YearOfPublication, "/year",
+                        valueConverter: s => int.Parse(string.Format("20{0}", s.Substring(4, 2))))
+                );
+
+            const string typePred = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            const string typeObject = "<http://netriple.com/unittesting/Book>";
+            const string subj = "<http://netriple.com/unittesting/book/990088007711>";
+
+            const string unknownTypeObject = "<http://netriple.com/unittesting/UnknownEntity>";
+            const string unknownSubj = "<http://netriple.com/unittesting/unknown/1>";
+
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = subj, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/unittesting/book/isbn>", Object = "990088007711" },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/unittesting/book/year>", Object = "010113" },
+                new Triple{ Subject = unknownSubj, Predicate = typePred, Object = unknownTypeObject }
+            };
+
+            // Act
+            var book = triples.ToObject<Book>();
+
+            // Assert
+            Assert.IsNotNull(book);
+        }
+
+        [TestMethod]
+        public void ToObject_WithUnknownRdfTypes_UnknownsListedCorrectly()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Book>("http://netriple.com/unittesting/Book")
+                    .Subject(m => m.Isbn, "http://netriple.com/unittesting/book/{0}")
+                    .WithPropertyPredicateBase("http://netriple.com/unittesting/book")
+                    .Prop(b => b.Isbn, "/isbn")
+                    .Prop(b => b.YearOfPublication, "/year",
+                        valueConverter: s => int.Parse(string.Format("20{0}", s.Substring(4, 2))))
+                );
+
+            const string typePred = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            const string typeObject = "<http://netriple.com/unittesting/Book>";
+            const string subj = "<http://netriple.com/unittesting/book/990088007711>";
+
+            const string unknownTypeObject = "<http://netriple.com/unittesting/UnknownEntity>";
+            const string unknownSubj = "<http://netriple.com/unittesting/unknown/1>";
+            const string unknownSubj2 = "<http://netriple.com/unittesting/unknown/2>";
+
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = subj, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/unittesting/book/isbn>", Object = "990088007711" },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/unittesting/book/year>", Object = "010113" },
+                new Triple{ Subject = unknownSubj, Predicate = typePred, Object = unknownTypeObject },
+                new Triple{ Subject = unknownSubj2, Predicate = typePred, Object = unknownTypeObject },
+                new Triple{ Subject = unknownSubj2, Predicate = "<http://netriple.com/unittesting/unknown/age>", Object = "2" },
+                new Triple{ Subject = "<http://netriple.com/unittesting/unknowntype2/abc>", Predicate = typePred, Object = "<http://netriple.com/unittesting/UnknownEntityType2>" },
+            };
+
+            // Act
+            var unknowns = new List<string>();
+            var book = triples.ToObject<Book>(unknowns);
+
+            // Assert
+            Assert.IsNotNull(book);
+            Assert.AreEqual(3, unknowns.Count);
+            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknown/1> -> <http://netriple.com/unittesting/UnknownEntity>"));
+            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknown/2> -> <http://netriple.com/unittesting/UnknownEntity>"));
+            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknowntype2/abc> -> <http://netriple.com/unittesting/UnknownEntityType2>"));
+        }
+
+        [TestMethod]
         public void ToObject_WithShort_ShortSetAsExpected()
         {
             //

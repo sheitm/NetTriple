@@ -175,6 +175,84 @@ namespace NetTriple.Tests
             }
         }
 
+        [TestMethod]
+        public void ToEnumValueFromRdfEnum_Null_ReturnsNull()
+        {
+            // Arrange
+            string s = null;
+
+            // Act
+            var enumString = s.ToEnumValueFromRdfEnum();
+
+            // Assert
+            Assert.IsNull(enumString);
+        }
+
+        [TestMethod]
+        public void ToEnumValueFromRdfEnum_Whitespace_ReturnsNull()
+        {
+            // Arrange
+            string s = "            ";
+
+            // Act
+            var enumString = s.ToEnumValueFromRdfEnum();
+
+            // Assert
+            Assert.IsNull(enumString);
+        }
+
+        [TestMethod]
+        public void ToEnumValueFromRdfEnum_WithAngledBracketes_ReturnsExpectedValue()
+        {
+            // Arrange
+            string s = "<http://nettriples.com/extensions/expectedValue>";
+
+            // Act
+            var enumString = s.ToEnumValueFromRdfEnum();
+
+            // Assert
+            Assert.AreEqual("expectedValue", enumString);
+        }
+
+        [TestMethod]
+        public void ToEnumValueFromRdfEnum_WithAngledBracketesAndTrailingSlash_ReturnsExpectedValue()
+        {
+            // Arrange
+            string s = "<http://nettriples.com/extensions/expectedValue/>";
+
+            // Act
+            var enumString = s.ToEnumValueFromRdfEnum();
+
+            // Assert
+            Assert.AreEqual("expectedValue", enumString);
+        }
+
+        [TestMethod]
+        public void ToEnumValueFromRdfEnum_PlainUrl_ReturnsExpectedValue()
+        {
+            // Arrange
+            string s = "http://nettriples.com/extensions/expectedValue";
+
+            // Act
+            var enumString = s.ToEnumValueFromRdfEnum();
+
+            // Assert
+            Assert.AreEqual("expectedValue", enumString);
+        }
+
+        [TestMethod]
+        public void ToEnumValueFromRdfEnum_PlainUrlTrailingSlash_ReturnsExpectedValue()
+        {
+            // Arrange
+            string s = "http://nettriples.com/extensions/expectedValue/";
+
+            // Act
+            var enumString = s.ToEnumValueFromRdfEnum();
+
+            // Assert
+            Assert.AreEqual("expectedValue", enumString);
+        }
+
         private IEnumerable<Triple> GetTriples()
         {
             var measurmentSubject = "<http://netriple.com/unittesting/measurement/111>";

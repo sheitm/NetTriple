@@ -20,12 +20,23 @@ namespace NetTriple
 
         public static T ToObject<T>(this IEnumerable<Triple> triples)
         {
-            return (T)ToObject(typeof(T), triples);
+            return ToObject<T>(triples, new List<string>());
+        }
+
+        public static T ToObject<T>(this IEnumerable<Triple> triples, IList<string> unknownRdfTypes)
+        {
+            return (T)ToObject(typeof(T), triples, unknownRdfTypes);
         }
 
         public static object ToObject(Type type, IEnumerable<Triple> triples)
         {
-            var context = Expand(triples);
+            return ToObject(type, triples, new List<string>());
+        }
+
+        public static object ToObject(Type type, IEnumerable<Triple> triples, IList<string> unknownRdfTypes)
+        {
+            var known = RemoveUnknowns(triples, unknownRdfTypes);
+            var context = Expand(known);
             return context.GetFirstOfType(type);
         }
 
@@ -88,7 +99,7 @@ namespace NetTriple
                 });
         }
 
-        private static IInflationContext Expand( IEnumerable<Triple> triples)
+        private static IInflationContext Expand(IEnumerable<Triple> triples)
         {
             var subjectMap = GetSubjectMap(triples);
             var context = new InflationContext(triples);
@@ -103,6 +114,29 @@ namespace NetTriple
 
             context.LinkAll(locator);
             return context;
+        }
+
+        private static IEnumerable<Triple> RemoveUnknowns(IEnumerable<Triple> triples, IList<string> unknownRdfTypes)
+        {
+            const string typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+
+            var declared = LoadAllRdfClasses.DeclaredRdfTypes.ToList();
+            if (declared == null || !declared.Any())
+            {
+                return triples;
+            }
+
+            var notDeclaredRdfTypeTriples = triples
+                .Where(t => t.IsPredicateMatch(typePredicate))
+                .Where(t => declared.All(d => d != t.Object.TrimStart(new[] {'<'}).TrimEnd(new[] {'>'})))
+                .ToList();
+
+            foreach (var notDeclared in notDeclaredRdfTypeTriples)
+            {
+                unknownRdfTypes.Add(string.Format("{0} -> {1}", notDeclared.Subject, notDeclared.Object));
+            }
+
+            return triples.Where(t => notDeclaredRdfTypeTriples.All(nt => nt.Subject != t.Subject));
         }
     }
 }

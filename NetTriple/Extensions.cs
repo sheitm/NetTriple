@@ -41,7 +41,6 @@ namespace NetTriple
             return nTriples.ToTriplesFromNTriples();
         }
 
-
         public static IEnumerable<Triple> ToTypeUniqueTriples(this IEnumerable<Triple> triples)
         {
             var subjectMap = GetSubjectMap(triples);
@@ -65,6 +64,21 @@ namespace NetTriple
 
                     return result;
                 });
+        }
+
+        public static string ToEnumValueFromRdfEnum(this string s)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                return null;
+            }
+
+            var p = s.EndsWith("/>")
+                ? s.Substring(0, s.Length - 2)
+                : s;
+
+            var arr = p.TrimEnd('/').Split(new[] {'/'});
+            return arr[arr.Length - 1].TrimEnd(new[] { '>' });
         }
 
         private static IEnumerable<IEnumerable<Triple>> DuplicateMultitypeTriples(IEnumerable<Triple> triples)

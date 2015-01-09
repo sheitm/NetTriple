@@ -38,6 +38,12 @@ namespace NetTriple
             return Object == obj && Predicate == pred;
         }
 
+        public bool IsPredicateMatch(string predicate)
+        {
+            var pred = predicate.StartsWith("<") ? predicate : string.Format("<{0}>", predicate);
+            return Predicate == pred;
+        }
+
         private object WashStringObject()
         {
             if (string.IsNullOrWhiteSpace(Object))
