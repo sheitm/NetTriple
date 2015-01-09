@@ -42,7 +42,13 @@ namespace NetTriple
 
         public static IEnumerable<object> ToObjects(this IEnumerable<Triple> triples)
         {
-            var context = Expand(triples);
+            return ToObjects(triples, new List<string>());
+        }
+
+        public static IEnumerable<object> ToObjects(this IEnumerable<Triple> triples, IList<string> unknownRdfTypes)
+        {
+            var known = RemoveUnknowns(triples, unknownRdfTypes);
+            var context = Expand(known);
             return context.GetAll();
         }
 
