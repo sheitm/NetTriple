@@ -144,7 +144,7 @@ namespace NetTriple.Annotation.Internal
         {
             try
             {
-                var s = RemoveTypeInfo(input);
+                var s = WashStringObject(RemoveTypeInfo(input));
 
                 if (typeof(T).IsEnum)
                 {

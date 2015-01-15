@@ -86,6 +86,7 @@
     <Compile Include="TestDomain\NotAnnotated.cs" />
     <Compile Include="TestDomain\Order.cs" />
     <Compile Include="TestDomain\OrderDetail.cs" />
+    <Compile Include="TestDomain\Payment.cs" />
     <Compile Include="TestDomain\Player.cs" />
     <Compile Include="TestDomain\PointInTime.cs" />
     <Compile Include="TestDomain\TimeSeries.cs" />

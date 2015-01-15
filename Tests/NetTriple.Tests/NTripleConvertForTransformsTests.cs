@@ -993,15 +993,14 @@ namespace NetTriple.Tests
             // Assert
             Assert.IsNotNull(book);
             Assert.AreEqual(3, unknowns.Count);
-            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknown/1> -> <http://netriple.com/unittesting/UnknownEntity>"));
-            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknown/2> -> <http://netriple.com/unittesting/UnknownEntity>"));
-            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknowntype2/abc> -> <http://netriple.com/unittesting/UnknownEntityType2>"));
+            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknown/1> <http://psi.hafslund.no/sesam/orphaned-entity> <http://netriple.com/unittesting/UnknownEntity>"));
+            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknown/2> <http://psi.hafslund.no/sesam/orphaned-entity> <http://netriple.com/unittesting/UnknownEntity>"));
+            Assert.IsTrue(unknowns.Contains("<http://netriple.com/unittesting/unknowntype2/abc> <http://psi.hafslund.no/sesam/orphaned-entity> <http://netriple.com/unittesting/UnknownEntityType2>"));
         }
 
         [TestMethod]
         public void ToObject_WithShort_ShortSetAsExpected()
         {
-            //
             // Arrange
             LoadAllRdfClasses.LoadTransforms(
                 BuildTransform.For<EntityWithShort>("http://netriple.com/short")
@@ -1027,6 +1026,37 @@ namespace NetTriple.Tests
 
             // Assert
             Assert.AreEqual(s, ms.MyShort);
+        }
+
+        [TestMethod]
+        public void ToObject_WithRdfClassQualifiers_GetsExpectedObject()
+        {
+            // Arrange
+            LoadAllRdfClasses.LoadTransforms(
+                BuildTransform.For<Payment>("http://netriple.com/payment")
+                    .Subject(m => m.Id, "http://netriple.com/unittesting/payment/{0}")
+                    .WithPropertyPredicateBase("http://netriple.com/payment")
+                    .Prop(p => p.Amount, "/amount")
+                    .Prop(p => p.Amount2, "/amount2")
+                    .Prop(p => p.Count, "/count")
+                    .Prop(p => p.Id, "/id")
+                    .Prop(p => p.To, "/to")
+                );
+
+            var subj = "<http://netriple.com/unittesting/payment/1>";
+            const string typePred = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+            const string typeObject = "<http://netriple.com/payment>";
+            var triples = new List<Triple>
+            {
+                new Triple{ Subject = subj, Predicate = typePred, Object = typeObject },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/payment/id>", Object = "1" },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/payment/to>", Object = "\"Petter\"^^<http://www.w3.org/2001/XMLSchema#string>" },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/payment/amount>", Object = "\"230\"^^<http://www.w3.org/2001/XMLSchema#decimal>"  },
+                new Triple{ Subject = subj, Predicate = "<http://netriple.com/payment/amount2>", Object = "42^^<http://www.w3.org/2001/XMLSchema#decimal>"  }
+            };
+
+            // Act
+            var payment = triples.ToObject<Payment>();
         }
     }
 }

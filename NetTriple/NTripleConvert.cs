@@ -125,6 +125,7 @@ namespace NetTriple
         private static IEnumerable<Triple> RemoveUnknowns(IEnumerable<Triple> triples, IList<string> unknownRdfTypes)
         {
             const string typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+            const string unknownPredicate = "<http://psi.hafslund.no/sesam/orphaned-entity>";
 
             var declared = LoadAllRdfClasses.DeclaredRdfTypes.ToList();
             if (declared == null || !declared.Any())
@@ -139,7 +140,7 @@ namespace NetTriple
 
             foreach (var notDeclared in notDeclaredRdfTypeTriples)
             {
-                unknownRdfTypes.Add(string.Format("{0} -> {1}", notDeclared.Subject, notDeclared.Object));
+                unknownRdfTypes.Add(string.Format("{0} {1} {2}", notDeclared.Subject, unknownPredicate, notDeclared.Object));
             }
 
             return triples.Where(t => notDeclaredRdfTypeTriples.All(nt => nt.Subject != t.Subject));
