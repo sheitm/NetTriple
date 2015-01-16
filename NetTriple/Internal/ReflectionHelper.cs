@@ -72,27 +72,6 @@ namespace NetTriple.Annotation.Internal
             throw new InvalidOperationException();
         }
 
-        //public static string GetBody(Expression expression)
-        //{
-        //    if (ExpressionType.Lambda != expression.NodeType)
-        //    {
-        //        throw new ArgumentException("Only lambda expressions are supported.");
-        //    }
-
-        //    var s = expression.ToString();
-        //    var index = s.IndexOf("=>");
-        //    if (index < 0)
-        //    {
-        //        return s;
-        //    }
-
-        //    index = index + 2;
-        //    return s.Substring(index, s.Length - index);
-
-        //    //var lambda = (LambdaExpression) expression;
-        //    //return lambda.ToString();
-        //}
-
         /// <summary>
         /// Gets the type of the property. For non-list and non-generic properties, this is
         /// the declared types. For generic and enumerable types this is the inner type.

@@ -1,5 +1,4 @@
-﻿using System;
-using NetTriple.Annotation.Internal;
+﻿using NetTriple.Annotation.Internal;
 
 namespace NetTriple
 {
@@ -42,22 +41,6 @@ namespace NetTriple
         {
             var pred = predicate.StartsWith("<") ? predicate : string.Format("<{0}>", predicate);
             return Predicate == pred;
-        }
-
-        private object WashStringObject()
-        {
-            if (string.IsNullOrWhiteSpace(Object))
-            {
-                return Object;
-            }
-
-            var s = Object.StartsWith("\"")
-                ? Object.Substring(1, Object.Length - 1)
-                : Object;
-
-            return s.EndsWith("\"")
-                ? s.Substring(0, s.Length - 1)
-                : s;
         }
     }
 }

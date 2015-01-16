@@ -278,8 +278,8 @@ namespace NetTriple.Tests
             var sub = "<http://nettriple/player/997766>";
             Assert.IsTrue(triples.All(t => t.Subject == sub));
             Assert.IsTrue(triples.Any(t => t.Predicate == "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>" && t.Object == "<http://nettriple/Player>"));
-            Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/id>" && t.Object == "\"997766\""));
-            Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/gender>" && t.Object == "Male"));
+            Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/id>" && t.Object == "\"997766\"^^<http://www.w3.org/2001/XMLSchema#string>"));
+            Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/gender>" && t.Object == "\"Male\""));
             Assert.IsTrue(triples.Any(t => t.Predicate == "<http://nettriple/player/dateOfBirth>" && t.Object == "\"1955-12-03T23:00:00Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
 
             foreach (var triple in triples)
@@ -528,7 +528,7 @@ namespace NetTriple.Tests
             // Assert
             Assert.AreEqual(4, triples.Count());
             var st = triples.Single(t => t.Predicate == "<http://nettriples/time-series/schema/points>");
-            Assert.AreEqual("\"1;;2014-09-29T15:16:00Z##2;;2014-09-29T16:16:00Z##\"", st.Object);
+            Assert.AreEqual("\"1;;2014-09-29T15:16:00Z##2;;2014-09-29T16:16:00Z##\"^^<http://www.w3.org/2001/XMLSchema#string>", st.Object);
             //Assert.IsTrue(triples.Any(t => t.Object == "1;;2014-09-29T15:16:00Z##2;;2014-09-29T16:16:00Z##"));
         }
 
@@ -724,7 +724,7 @@ namespace NetTriple.Tests
 
             // Assert
             var trpl = triples.Single(t => t.Predicate == "<http://nettriples/adressabledevice/schema/willAcknowledge>");
-            Assert.AreEqual("true", trpl.Object);
+            Assert.AreEqual("\"true\"^^<http://www.w3.org/2001/XMLSchema#boolean>", trpl.Object);
 
             foreach (var triple in triples)
             {

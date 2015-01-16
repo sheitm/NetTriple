@@ -18,17 +18,17 @@ namespace NetTriple.Emit
 
             if (obj is string)
             {
-                return string.Format("\"{0}\"", obj);
+                return string.Format("\"{0}\"^^<http://www.w3.org/2001/XMLSchema#string>", obj);
             }
 
             if (obj is decimal || obj is double || obj is float)
             {
-                return obj.ToString().Replace(',', '.');
+                return string.Format("\"{0}\"^^<http://www.w3.org/2001/XMLSchema#{1}>", obj.ToString().Replace(',', '.'), obj.GetType().Name.ToLower());
             }
 
             if (obj is bool)
             {
-                return obj.ToString().ToLower();
+                return string.Format("\"{0}\"^^<http://www.w3.org/2001/XMLSchema#boolean>", obj.ToString().ToLower());
             }
 
             if (obj is DateTime)
@@ -42,7 +42,7 @@ namespace NetTriple.Emit
                 return string.Format("\"{0}\"^^<http://www.w3.org/2001/XMLSchema#dateTime>", obj);
             }
 
-            return obj.ToString();
+            return string.Format("\"{0}\"", obj.ToString());
         }
 
         public static T ToDeserializedStructObject<T>(this string s)
