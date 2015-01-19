@@ -42,6 +42,20 @@ namespace NetTriple.Tests
         }
 
         [TestMethod]
+        public void ToTriplesFromNTriples_WithHashes_ReturnsExpectedTriples()
+        {
+            // Arrange
+            var nTriples = TestResources.NTriplesWithHashes;
+
+            // Act
+            var triples = nTriples.ToTriplesFromNTriples().ToList();
+
+            // Assert
+            Assert.AreEqual(19, triples.Count);
+            Assert.IsTrue(triples.All(triple => triple.Subject.StartsWith("<http:")));
+        }
+
+        [TestMethod]
         public void ToBytes_WithValidTriples_ReturnsBytesAsExpected()
         {
             // Arrange
@@ -251,6 +265,21 @@ namespace NetTriple.Tests
 
             // Assert
             Assert.AreEqual("expectedValue", enumString);
+        }
+
+        [TestMethod]
+        public void Compression_WithData_CompressesAndDecompressesCorrectly()
+        {
+            // Arrange
+            var original = TestResources.NTriplesWithHashes;
+
+            // Act
+            var compressed = original.Compress();
+            var decompressed = compressed.Decompress();
+
+            // Assert
+            Assert.IsTrue(compressed.Length < decompressed.Length);
+            Assert.AreEqual(original, decompressed);
         }
 
         private IEnumerable<Triple> GetTriples()

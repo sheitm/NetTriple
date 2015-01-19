@@ -20,5 +20,7 @@ namespace NetTriple.Emit
         IEnumerable<T> GetAllInverse<T>(string sourceObject, string predicate);
 
         IEnumerable<object> GetAll();
+
+        IDictionary<string, object> GetAllSubjectEntityPair();
     }
 }

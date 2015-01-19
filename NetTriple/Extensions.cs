@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -141,6 +143,7 @@ namespace NetTriple
         {
             return nTriples.Split(new string[] {Environment.NewLine}, StringSplitOptions.None)
                 .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Where(line => !line.TrimStart().StartsWith("#"))
                 .Select(line =>
                 {
                     line = line.Trim();
@@ -190,6 +193,51 @@ namespace NetTriple
             var textInfo = new CultureInfo("en-US", false).TextInfo;
             var lwr = textInfo.ToLower(s[0]);
             return string.Format("{0}{1}", lwr, s.Substring(1, s.Length-1));
+        }
+
+        public static string Compress(this string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return null;
+            }
+
+            var buffer = Encoding.UTF8.GetBytes(text);
+            var ms = new MemoryStream();
+            using (var zip = new GZipStream(ms, CompressionMode.Compress, true))
+            {
+                zip.Write(buffer, 0, buffer.Length);
+            }
+
+            ms.Position = 0;
+
+            var compressed = new byte[ms.Length];
+            ms.Read(compressed, 0, compressed.Length);
+
+            var gzBuffer = new byte[compressed.Length + 4];
+            Buffer.BlockCopy(compressed, 0, gzBuffer, 4, compressed.Length);
+            Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gzBuffer, 0, 4);
+            return Convert.ToBase64String(gzBuffer);
+        }
+
+        public static string Decompress(this string compressedText)
+        {
+            byte[] gzBuffer = Convert.FromBase64String(compressedText);
+            using (var ms = new MemoryStream())
+            {
+                int msgLength = BitConverter.ToInt32(gzBuffer, 0);
+                ms.Write(gzBuffer, 4, gzBuffer.Length - 4);
+
+                byte[] buffer = new byte[msgLength];
+
+                ms.Position = 0;
+                using (var zip = new GZipStream(ms, CompressionMode.Decompress))
+                {
+                    zip.Read(buffer, 0, buffer.Length);
+                }
+
+                return Encoding.UTF8.GetString(buffer);
+            }
         }
     }
 }

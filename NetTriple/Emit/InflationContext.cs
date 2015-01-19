@@ -60,6 +60,11 @@ namespace NetTriple.Emit
             return _map.Values;
         }
 
+        public IDictionary<string, object> GetAllSubjectEntityPair()
+        {
+            return _map;
+        }
+
         public T Get<T>(string sourceSubject, string predicate)
         {
             //var triple = _allTriples.SingleOrDefault(t => t.IsMatch(sourceSubject, predicate));
