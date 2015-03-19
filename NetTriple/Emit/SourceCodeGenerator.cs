@@ -197,7 +197,7 @@ namespace NetTriple.Emit
                 : new RelationSourceCodeGenerator(_transform);
 
             relationGenerator.AppendConversionScript(sb);
-
+            sb.Append("BeingConverted.Finished(s);\r\n");
             return sb.ToString();
         }
 
